@@ -29,23 +29,47 @@ function supportsTools(model: string) {
   return MODELS_WITH_TOOLS.some((m) => model.includes(m.replace("@cf/", "")) || model === m);
 }
 
-function getCredentials() {
+type CloudflareCreds = { provider: "cloudflare"; apiKey: string; accountId: string };
+type GroqCreds = { provider: "groq"; apiKey: string };
+
+function getCloudflareCredentials(): CloudflareCreds | null {
   const apiKey = process.env.CLOUDFLARE_API_TOKEN;
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   if (!apiKey || !accountId) return null;
-  return { apiKey, accountId };
+  return { provider: "cloudflare", apiKey, accountId };
 }
 
-let client: OpenAI | null = null;
+function getGroqCredentials(): GroqCreds | null {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) return null;
+  return { provider: "groq", apiKey };
+}
 
-function getClient(creds: { apiKey: string; accountId: string }) {
-  if (!client) {
-    client = new OpenAI({
+let cfClient: OpenAI | null = null;
+let groqClient: OpenAI | null = null;
+
+function getClient(provider: string) {
+  if (provider === "groq") {
+    const creds = getGroqCredentials();
+    if (!creds) return null;
+    if (!groqClient) {
+      groqClient = new OpenAI({
+        apiKey: creds.apiKey,
+        baseURL: "https://api.groq.com/openai/v1",
+      });
+    }
+    return groqClient;
+  }
+
+  const creds = getCloudflareCredentials();
+  if (!creds) return null;
+  if (!cfClient) {
+    cfClient = new OpenAI({
       apiKey: creds.apiKey,
       baseURL: `https://api.cloudflare.com/client/v4/accounts/${creds.accountId}/ai/v1`,
     });
   }
-  return client;
+  return cfClient;
 }
 
 function mockResponse(req: LLMRequest, reason: string): LLMResponse {
@@ -57,7 +81,7 @@ function mockResponse(req: LLMRequest, reason: string): LLMResponse {
     `Skill model: ${req.model}`,
     `Input received: ${preview || "(empty)"}`,
     "",
-    "Configure CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID to enable real execution.",
+    "Configure CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID or GROQ_API_KEY to enable real execution.",
   ].join("\n");
   return { output, mocked: true };
 }
@@ -76,9 +100,30 @@ function parseTextToolCall(
   }
 }
 
+async function callLLM(
+  provider: string,
+  model: string,
+  messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+  tools: OpenAI.Chat.Completions.ChatCompletionTool[] | undefined,
+) {
+  const client = getClient(provider);
+  if (!client) return null;
+  return client.chat.completions.create({
+    model,
+    messages,
+    tools,
+    tool_choice: tools ? "auto" : undefined,
+    max_tokens: 4096,
+  });
+}
+
 export async function executeLLM(req: LLMRequest): Promise<LLMResponse> {
-  const creds = getCredentials();
-  if (!creds) {
+  const provider = req.provider?.toLowerCase() === "groq" ? "groq" : "cloudflare";
+
+  if (provider === "groq" && !getGroqCredentials()) {
+    return mockResponse(req, "missing GROQ_API_KEY");
+  }
+  if (provider === "cloudflare" && !getCloudflareCredentials()) {
     return mockResponse(req, "missing Cloudflare Workers AI credentials");
   }
 
@@ -92,13 +137,10 @@ export async function executeLLM(req: LLMRequest): Promise<LLMResponse> {
       ? getAllToolDefinitions()
       : undefined;
 
-    const response = await getClient(creds).chat.completions.create({
-      model: req.model,
-      messages,
-      tools,
-      tool_choice: tools ? "auto" : undefined,
-      max_tokens: 4096,
-    });
+    const response = await callLLM(provider, req.model, messages, tools);
+    if (!response) {
+      return mockResponse(req, "failed to create LLM client");
+    }
 
     const message = response.choices[0]?.message;
     if (!message) {
@@ -151,11 +193,10 @@ export async function executeLLM(req: LLMRequest): Promise<LLMResponse> {
         } as OpenAI.Chat.Completions.ChatCompletionToolMessageParam);
       }
 
-      const finalResponse = await getClient(creds).chat.completions.create({
-        model: req.model,
-        messages: toolMessages,
-        max_tokens: 4096,
-      });
+      const finalResponse = await callLLM(provider, req.model, toolMessages, undefined);
+      if (!finalResponse) {
+        return mockResponse(req, "failed to call LLM for tool response");
+      }
 
       return {
         output: finalResponse.choices[0]?.message?.content || "",

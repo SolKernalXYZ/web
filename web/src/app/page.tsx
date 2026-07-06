@@ -6,6 +6,7 @@ import Reveal from '@/components/Reveal';
 import Logo from '@/components/Logo';
 import HeroVisual from '@/components/graphics/HeroVisual';
 import { GridBackdrop, GlowOrb, SectionDivider } from '@/components/graphics/Decor';
+import RoadmapSection from '@/components/RoadmapSection';
 import {
   SkillsIcon, RunIcon, StakeIcon, SubmitIcon,
   RegistryIcon, BlinkIcon, YieldIcon, ReceiptIcon, RouterIcon, ComposeIcon,
@@ -258,6 +259,9 @@ export default async function Home() {
             ))}
           </div>
         </section>
+
+        {/* ── Roadmap ──────────────────────────────────────── */}
+        <RoadmapSection />
 
         <SectionDivider />
 
