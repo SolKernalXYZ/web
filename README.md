@@ -253,7 +253,7 @@ NEXT_PUBLIC_SOLANA_RPC_URL="https://api.devnet.solana.com"
 NEXT_PUBLIC_SOLANA_NETWORK="devnet"
 
 # Token Addresses (set after deployment)
-NEXT_PUBLIC_SKRN_MINT_ADDRESS=""
+NEXT_PUBLIC_SKRN_MINT_ADDRESS="9LnqE9nevGsDHqs7bhJSyMzXwxdQJ2x4ypJNreEZpump"
 
 # LLM Providers (optional for development)
 CLOUDFLARE_API_TOKEN=""

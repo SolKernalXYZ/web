@@ -124,7 +124,7 @@ CLOUDFLARE_API_TOKEN=<your-cloudflare-token>
 CLOUDFLARE_ACCOUNT_ID=<your-cloudflare-account-id>
 OPENAI_API_KEY=<your-openai-key>
 TAVILY_API_KEY=<your-tavily-key>
-NEXT_PUBLIC_SKRN_MINT_ADDRESS=<token-mint-after-deployment>
+NEXT_PUBLIC_SKRN_MINT_ADDRESS=9LnqE9nevGsDHqs7bhJSyMzXwxdQJ2x4ypJNreEZpump
 ```
 
 ## 📋 Post-Push Checklist
