@@ -36,20 +36,20 @@ export default function CaAnnouncement() {
 
   return (
     <div
-      className="fixed bottom-6 left-1/2 z-[100] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 animate-fade-up"
+      className="fixed bottom-0 left-0 right-0 z-[100] animate-fade-up sm:bottom-6 sm:left-1/2 sm:w-[calc(100%-2rem)] sm:max-w-lg sm:-translate-x-1/2"
       role="alert"
     >
-      <div className="rounded-xl border border-border bg-bg-elevated p-4 shadow-lg backdrop-blur-xl">
-        <div className="flex items-start justify-between gap-3">
+      <div className="rounded-none border-t border-border bg-bg-elevated p-3 shadow-lg backdrop-blur-xl sm:rounded-xl sm:border sm:p-4">
+        <div className="flex items-start gap-2 sm:gap-3">
           <div className="min-w-0 flex-1">
-            <p className="text-mono-xs mb-1.5 uppercase tracking-wider text-text-tertiary">
+            <p className="mb-1.5 text-mono-xs uppercase tracking-wider text-text-tertiary">
               Official $SKRN Token
             </p>
             <button
               onClick={handleCopy}
-              className="group flex w-full items-center gap-2 rounded-lg bg-bg-subtle px-3 py-2 text-left text-xs transition-colors hover:bg-bg-hover sm:text-sm"
+              className="flex w-full items-center gap-2 rounded-lg bg-bg-subtle px-2 py-2.5 text-xs transition-colors active:bg-bg-hover sm:px-3 sm:text-sm"
             >
-              <code className="min-w-0 flex-1 truncate font-mono text-text-primary">
+              <code className="min-w-0 flex-1 break-all font-mono leading-tight text-text-primary">
                 {CA}
               </code>
               <span className="shrink-0 text-text-tertiary transition-colors group-hover:text-accent">
@@ -62,10 +62,10 @@ export default function CaAnnouncement() {
           </div>
           <button
             onClick={handleClose}
-            className="shrink-0 rounded-lg p-1.5 text-text-tertiary transition-colors hover:bg-bg-hover hover:text-text-primary"
+            className="flex shrink-0 items-center justify-center rounded-lg p-2 text-text-tertiary transition-colors active:text-text-primary sm:hover:bg-bg-hover sm:hover:text-text-primary"
             aria-label="Close announcement"
           >
-            <XIcon size={18} />
+            <XIcon size={20} />
           </button>
         </div>
       </div>
