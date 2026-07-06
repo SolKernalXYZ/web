@@ -222,7 +222,6 @@ We are committed to providing a welcoming and inclusive environment for all cont
 
 ## 💬 Getting Help
 
-- **Discord:** [discord.gg/solkernal](https://discord.gg/solkernal)
 - **Twitter:** [@SolKernal_](https://x.com/SolKernal_)
 - **Email:** hello@solkernal.xyz
 - **Discussions:** Use GitHub Discussions for questions
@@ -232,6 +231,6 @@ We are committed to providing a welcoming and inclusive environment for all cont
 All contributors will be recognized in:
 - Release notes
 - Contributors page (coming soon)
-- Special shoutouts on Twitter/Discord
+- Special shoutouts on Twitter
 
 Thank you for contributing to SolKernal! 🚀

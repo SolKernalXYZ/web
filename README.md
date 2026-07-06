@@ -5,7 +5,6 @@
 ### AI Skill Operating System on Solana
 
 [![Website](https://img.shields.io/badge/🌐_solkernal.xyz-7C3AED?style=for-the-badge)](https://solkernal.xyz)
-[![Discord](https://img.shields.io/badge/Discord-Join_Us-7C3AED?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/solkernal)
 [![Twitter](https://img.shields.io/badge/@SolKernal__-Follow-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://x.com/SolKernal_)
 [![License](https://img.shields.io/badge/License-MIT-A78BFA?style=for-the-badge)](LICENSE)
 
@@ -23,7 +22,7 @@
 SolKernal is a **decentralized AI execution layer** built on Solana that makes AI skills:
 
 - **Permissionless** — Anyone can publish. No approval needed.
-- **Executable Anywhere** — Every skill becomes a Solana Blink (run from Twitter, Telegram, Discord, or any URL)
+- **Executable Anywhere** — Every skill becomes a Solana Blink (run from Twitter, Telegram, or any URL)
 - **Verifiable** — Every execution writes an on-chain receipt with provenance
 - **Composable** — Skills can call other skills as sub-routines
 - **Revenue-Generating** — Builders earn 30% per execution, stakers earn 50%, treasury retains 20%
@@ -82,7 +81,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │                         User Layer                                │
-│  Twitter │ Telegram │ Discord │ Web App │ Mobile App │ API       │
+│  Twitter │ Telegram │ Web App │ Mobile App │ API       │
 └────────────────────────┬─────────────────────────────────────────┘
                          │
                          ▼
@@ -209,7 +208,7 @@ Visit the [marketplace](https://solkernal.xyz/skills) to discover AI skills acro
 
 #### Via Solana Blink (Twitter/Telegram)
 1. Copy skill's Blink URL from skill detail page
-2. Paste into Twitter/Telegram/Discord
+2. Paste into Twitter/Telegram
 3. Click the embedded action button
 4. Sign transaction in your wallet
 5. Results appear in-app
@@ -379,7 +378,6 @@ Inspired by:
 - **Website:** [solkernal.xyz](https://solkernal.xyz)
 - **Documentation:** [docs.solkernal.xyz](https://docs.solkernal.xyz)
 - **Twitter:** [@SolKernal_](https://x.com/SolKernal_)
-- **Discord:** [discord.gg/solkernal](https://discord.gg/solkernal)
 - **GitHub:** [github.com/SolKernalXYZ](https://github.com/SolKernalXYZ)
 - **Email:** [hello@solkernal.xyz](mailto:hello@solkernal.xyz)
 

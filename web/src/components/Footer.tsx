@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Logo from "./Logo";
 import StatusTicker from "./StatusTicker";
-import { GithubIcon, XIcon, DiscordIcon } from "./icons";
+import { GithubIcon, XIcon } from "./icons";
 
 const columns: { heading: string; links: { label: string; href: string; external?: boolean }[] }[] = [
   {
@@ -29,7 +29,6 @@ const columns: { heading: string; links: { label: string; href: string; external
 const socials = [
   { label: "GitHub", href: "https://github.com/SolKernalXYZ", Icon: GithubIcon },
   { label: "X / Twitter", href: "https://x.com/SolKernal_", Icon: XIcon },
-  { label: "Discord", href: "https://discord.com", Icon: DiscordIcon },
 ];
 
 export default function Footer() {

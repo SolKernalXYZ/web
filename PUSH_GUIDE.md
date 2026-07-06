@@ -103,7 +103,7 @@ git check-ignore web/.next
 After pushing, update these placeholder links in `README.md`:
 
 - Repository link: Update to your actual GitHub URL
-- Discord: Update when you create the server
+
 - Twitter: Update with actual handle
 
 ## 🔐 Environment Variables (For Deployment)
