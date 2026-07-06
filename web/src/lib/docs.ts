@@ -76,7 +76,7 @@ export const docs: DocPage[] = [
             type: "ul",
             items: [
               "Builders publish prompt bundles and earn per execution.",
-              "Users run skills with a wallet and pay a clear USDC or SOL fee.",
+              "Users run skills with a wallet and pay a clear $SKRN fee.",
               "Stakers lock $SKRN and receive 50% of protocol execution fees.",
               "Each execution creates a receipt with the skill, wallet, cost, provider, timestamp, and output hash.",
             ],
@@ -553,7 +553,7 @@ export const docs: DocPage[] = [
           },
           {
             type: "p",
-            text: "Stakers receive 50% of execution fees. Rewards are designed to be usage-backed: when more users run paid skills, the staker pool receives more USDC.",
+            text: "Stakers receive 50% of execution fees. Rewards are designed to be usage-backed: when more users run paid skills, the staker pool receives more $SKRN.",
           },
           {
             type: "table",
@@ -561,7 +561,7 @@ export const docs: DocPage[] = [
             rows: [
               ["Stake", "Locks $SKRN into the staking position and increases reward share."],
               ["Unstake", "Returns selected $SKRN and claims pending rewards in the same flow where supported."],
-              ["Claim", "Collects pending USDC rewards without changing the staked amount."],
+              ["Claim", "Collects pending $SKRN rewards without changing the staked amount."],
             ],
           },
         ],
@@ -742,7 +742,7 @@ export const docs: DocPage[] = [
             type: "visual",
             variant: "fee-split",
           },
-          { type: "table", headers: ["Stream", "Share", "Use"], rows: [["Builder", "30%", "Creator monetization."], ["Stakers", "50%", "Usage-backed USDC rewards."], ["Treasury", "20%", "Infrastructure, audits, moderation, grants, and operations."]] },
+          { type: "table", headers: ["Stream", "Share", "Use"], rows: [["Builder", "30%", "Creator monetization."], ["Stakers", "50%", "Usage-backed $SKRN rewards."], ["Treasury", "20%", "Infrastructure, audits, moderation, grants, and operations."]] },
         ],
       },
     ],
@@ -871,7 +871,7 @@ export const docs: DocPage[] = [
               "Foundation: stabilize the web app, docs, marketplace browsing, skill detail pages, submit flow, execution API, staking dashboard, and production deployment path.",
               "Execution trust: add stronger wallet verification, durable receipt records, output hashing, execution status states, provider error handling, and clear mock-versus-real execution boundaries.",
               "Builder quality: introduce skill review tools, version history, prompt safety checks, analytics, featured skills, and a lightweight moderation queue for public submissions.",
-              "Payment and settlement: connect real USDC or SOL payment flows, enforce fee collection before execution, and make revenue attribution auditable across builders, stakers, and treasury.",
+              "Payment and settlement: connect real $SKRN payment flows, enforce fee collection before execution, and make revenue attribution auditable across builders, stakers, and treasury.",
               "On-chain protocol: deploy the Skill Registry, Execution Receipt, Staking Pool, and Fee Router programs once the off-chain product behavior has proven stable.",
               "Distribution surfaces: ship Solana Blinks, external embed flows, API examples, and partner integrations so skills can run outside the main web app.",
               "Composability: support skill chaining, reusable input schemas, workflow templates, and multi-step execution receipts for agent-style pipelines.",

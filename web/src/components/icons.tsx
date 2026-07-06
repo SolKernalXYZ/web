@@ -177,9 +177,4 @@ export const XIcon = (p: IconProps) => (
   </Base>
 );
 
-export const DiscordIcon = (p: IconProps) => (
-  <Base {...p}>
-    <path d="M8 12a1 1 0 1 0 0-.01M16 12a1 1 0 1 0 0-.01" />
-    <path d="M7 17c-1.5-.5-3-1.5-3-1.5C4 9 6 6.5 6 6.5A11 11 0 0 1 10 5l.5 1a13 13 0 0 1 3 0L14 5a11 11 0 0 1 4 1.5S20 9 20 15.5c0 0-1.5 1-3 1.5l-1-1.5M8 16l-1 1M16 16l1 1" />
-  </Base>
-);
+
