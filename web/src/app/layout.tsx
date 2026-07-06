@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
+import CaAnnouncement from '@/components/CaAnnouncement';
 import SolanaProvider from '@/components/SolanaProvider';
 import { ThemeProvider, themeInitScript } from '@/components/ThemeProvider';
 import MotionProvider from '@/components/MotionProvider';
@@ -64,6 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 {children}
               </main>
               <Footer />
+              <CaAnnouncement />
             </SolanaProvider>
           </MotionProvider>
         </ThemeProvider>
