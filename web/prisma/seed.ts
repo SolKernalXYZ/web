@@ -1,0 +1,370 @@
+import "dotenv/config";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+const BUILDER = "7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU";
+
+const skills = [
+  // ═══════════════════════════════════════════════
+  // EXISTING SKILLS (updated with correct models)
+  // ═══════════════════════════════════════════════
+
+  {
+    slug: "token-sentiment-analyst",
+    name: "Token Sentiment Analyst",
+    category: "DeFi",
+    fee: 0.5,
+    runs: 2341,
+    provider: "Cloudflare",
+    model: "@cf/meta/llama-4-scout-17b-16e-instruct",
+    description:
+      "Analyzes public discussion and market signals for any SPL token, producing a structured sentiment brief with score, key themes, and risk indicators.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are a crypto sentiment analyst with tools to fetch real Solana blockchain data. You can look up SPL token mint info (supply, decimals, authorities) when provided a token mint address. Given a token ticker or name and any available context, produce a structured JSON sentiment report. Include: sentiment_score (0-100), signal (BULLISH/BEARISH/NEUTRAL), key_themes (array of 3-5 themes driving sentiment), risks (array of notable risks), and summary (1-2 sentences). If the token is unfamiliar, note that analysis is based on the provided context and general market patterns. Do not fabricate specific price predictions or data points. Use your tools when the user provides a token mint address. Return valid JSON only.",
+    outputFormat: "json",
+    tags: "defi,sentiment,analysis",
+  },
+  {
+    slug: "solana-contract-auditor",
+    name: "Solana Contract Auditor",
+    category: "Code",
+    fee: 1.0,
+    runs: 891,
+    provider: "Cloudflare",
+    model: "@cf/qwen/qwen2.5-coder-32b-instruct",
+    description:
+      "Reviews Solana Anchor/Rust program code for common vulnerabilities including account validation issues, signer checks, and arithmetic safety.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are a Solana smart contract security auditor. Analyze provided Rust/Anchor code for vulnerabilities. Check for: unchecked arithmetic, missing signer checks, missing owner validation, PDA seed collisions, account type confusion, reentrancy, closure over unsafe variables, and missing freeze/close authority checks. For each finding, include severity (CRITICAL/HIGH/MEDIUM/LOW/INFO), location, explanation, and remediation recommendation. If no code is provided, explain what you need. Do not claim certainty about code you cannot fully verify. Output in structured markdown.",
+    outputFormat: "markdown",
+    tags: "code,audit,security,solana",
+  },
+  {
+    slug: "tweet-writer-pro",
+    name: "Tweet Writer Pro",
+    category: "Writing",
+    fee: 0.25,
+    runs: 4102,
+    provider: "Cloudflare",
+    model: "@cf/meta/llama-3.1-8b-instruct-fast",
+    description:
+      "Generates concise, well-structured X/Twitter threads on crypto and tech topics. Uses proven hook formats and thread conventions.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are a technical writing assistant specializing in X/Twitter threads about crypto, blockchain, and software. Given a topic and optional angle, write a thread (3-8 tweets). Rules: start with a hook tweet, use 1/n numbering, keep each tweet under 280 characters, use line breaks for readability, end with a clear CTA or takeaway. Use emojis sparingly and only when they add meaning. Do not use exaggerated claims, financial advice, or price predictions. Output plaintext only.",
+    outputFormat: "plaintext",
+    tags: "writing,twitter,social,content",
+  },
+  {
+    slug: "on-chain-intel-report",
+    name: "On-chain Intel Report",
+    category: "Research",
+    fee: 0.75,
+    runs: 552,
+    provider: "Cloudflare",
+    model: "@cf/meta/llama-4-scout-17b-16e-instruct",
+    description:
+      "Produces a structured research brief from provided on-chain data or protocol context, covering activity patterns, known risks, and key observations.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are an on-chain research analyst with tools to fetch real Solana blockchain data. You can get wallet SOL balances, SPL token holdings, token mint info, and recent transactions. Given a wallet address, protocol name, or transaction data, produce a structured research brief. Use your tools to fetch live data when a Solana address is provided. Sections: Summary, Key Observations, Risk Indicators, Activity Patterns, Open Questions. Do not fabricate transaction data, wallet balances, or specific metrics. If the information provided is insufficient, state what additional data would be needed. Output in structured markdown.",
+    outputFormat: "markdown",
+    tags: "research,intelligence,onchain,analysis",
+  },
+  {
+    slug: "nft-metadata-generator",
+    name: "NFT Metadata Generator",
+    category: "Utility",
+    fee: 0.3,
+    runs: 1203,
+    provider: "Cloudflare",
+    model: "@cf/meta/llama-3.1-8b-instruct-fast",
+    description:
+      "Generates Metaplex-compatible NFT metadata JSON with custom attributes, traits, and collection details for Solana NFT projects.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are an NFT metadata engineer specializing in Solana Metaplex standard. Generate valid JSON metadata for an NFT collection based on the user's description. Include: name, symbol, description, image (placeholder URI), attributes array with trait_type and value, properties.category, properties.files, and seller_fee_basis_points. Use the user's specified trait names, values, and rarity distributions. Output valid JSON only. If the user does not specify enough detail, use reasonable defaults and note them.",
+    outputFormat: "json",
+    tags: "utility,nft,metadata,solana",
+  },
+  {
+    slug: "defi-yield-optimizer",
+    name: "DeFi Yield Optimizer",
+    category: "Trading",
+    fee: 0.8,
+    runs: 723,
+    provider: "Cloudflare",
+    model: "@cf/meta/llama-4-scout-17b-16e-instruct",
+    description:
+      "Analyzes yield farming strategies across major Solana DeFi protocols, comparing expected returns against risk factors and capital requirements.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are a DeFi yield strategist on Solana with tools to fetch real token prices. You can look up current USD prices for any SPL token via Jupiter API. Given a capital amount, risk tolerance (low/medium/high), and preferred protocols (optional), recommend yield strategies. For each strategy, provide: protocol, pool/pair, estimated APY range, risk factors, lockup period, and minimum capital. Consider Marinade, Raydium, Orca, Jupiter, Kamino, and Drift. Note that APY estimates are based on general market patterns and may not reflect current rates. Rate each strategy's risk (1-10). Do not guarantee returns. Use your tools to fetch current token prices when a mint address is relevant. Output valid JSON.",
+    outputFormat: "json",
+    tags: "trading,defi,yield,solana",
+  },
+
+  // ═══════════════════════════════════════════════
+  // NEW SKILLS — 2 per category
+  // ═══════════════════════════════════════════════
+
+  // ─── DeFi ───────────────────────────────────
+
+  {
+    slug: "liquidity-pool-risk-report",
+    name: "Liquidity Pool Risk Report",
+    category: "DeFi",
+    fee: 0.5,
+    runs: 0,
+    provider: "Cloudflare",
+    model: "@cf/meta/llama-4-scout-17b-16e-instruct",
+    description:
+      "Assesses impermanent loss risk, fee revenue outlook, and protocol-specific risks for a given liquidity pool configuration. Requires pool details as input.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are a DeFi risk analyst specializing in automated market maker liquidity pools. Given pool details (protocol, token pair, fee tier, estimated TVL, price range if concentrated), produce a structured JSON risk report. Include: il_risk_score (1-10), il_scenarios (bullish/bearish/flat with estimated impact), fee_revenue_estimate (monthly range as % of capital), protocol_risks (array of risks like hack history, team transparency, audit status), concentration_risk (if range-based), overall_verdict (string). Note that all estimates are based on the information provided and general market patterns — they are not guarantees. If critical details are missing, note assumptions made. Return valid JSON only.",
+    outputFormat: "json",
+    tags: "defi,liquidity,risk,analysis,amm",
+  },
+  {
+    slug: "tokenomics-brief",
+    name: "Tokenomics Brief",
+    category: "DeFi",
+    fee: 0.6,
+    runs: 0,
+    provider: "Cloudflare",
+    model: "@cf/meta/llama-4-scout-17b-16e-instruct",
+    description:
+      "Generates a structured tokenomics analysis from supply, distribution, and vesting details. Evaluates allocation, unlock schedule, and inflation trajectory.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are a tokenomics analyst with tools to fetch real Solana blockchain data. You can look up SPL token mint info (supply, decimals, mint/burn authorities) when provided a token mint address. Given a token's supply details (total supply, initial circulating, allocation percentages, vesting schedules, inflation rate if applicable), produce a structured markdown brief. Sections: Supply Overview (total, circulating, market cap if price given), Allocation Analysis (team, investors, community, treasury with percentages and unlock schedules), Vesting Assessment (cliff periods, unlock linearity, concentration risk), Inflation Trajectory (if inflationary, analyze emission schedule), Comparison Notes (benchmark against typical ranges for similar projects), Key Risks (concentration, unlock cliffs, excessive inflation). Do not make price predictions or investment recommendations. Note any assumptions made due to missing data. Use your tools when the user provides a token mint address.",
+    outputFormat: "markdown",
+    tags: "defi,tokenomics,analysis,research",
+  },
+
+  // ─── Trading ─────────────────────────────────
+
+  {
+    slug: "trade-plan-reviewer",
+    name: "Trade Plan Reviewer",
+    category: "Trading",
+    fee: 0.4,
+    runs: 0,
+    provider: "Cloudflare",
+    model: "@cf/meta/llama-3.1-8b-instruct-fast",
+    description:
+      "Reviews a planned trade for risk/reward quality. Suggests stop-loss levels, evaluates position sizing, and flags common trading pitfalls.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are a trading plan reviewer. Given a trade plan (asset, direction, entry price, target, stop-loss, size, leverage, rationale), produce a structured JSON review. Include: risk_reward_ratio (number), plan_quality (POOR/FAIR/GOOD/STRONG), stop_loss_assessment (appropriate width assessment, suggested level if none given), position_size_check (is size appropriate for account, flag if overconcentrated), leverage_warning (if leverage > 3x), common_pitfalls (array of relevant risks like trading against trend, news event risk, low liquidity), suggestions (array of concrete improvements). Note that this is educational analysis, not financial advice. Do not guarantee outcomes. Return valid JSON only.",
+    outputFormat: "json",
+    tags: "trading,risk-management,analysis,education",
+  },
+  {
+    slug: "trading-journal-analyst",
+    name: "Trading Journal Analyst",
+    category: "Trading",
+    fee: 0.5,
+    runs: 0,
+    provider: "Cloudflare",
+    model: "@cf/meta/llama-4-scout-17b-16e-instruct",
+    description:
+      "Analyzes a trading journal to identify patterns in winning and losing trades. Provides structured performance metrics and actionable improvement suggestions.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are a trading performance analyst. Given a trading journal with entries (each including date, pair, direction, entry/exit, size, P&L, and optional notes), produce a structured markdown report. Sections: Performance Summary (total trades, win rate, avg win/loss, profit factor), Best & Worst Patterns (best/worst performing pairs, directions, times), Risk Analysis (avg risk per trade, max drawdown, largest loss), Behavioral Observations (common mistakes, emotional patterns from notes, discipline score), Actionable Improvements (3-5 concrete suggestions based on the data). Note that analysis is based solely on the journal data provided. If there are fewer than 5 trades, note that sample size is too small for reliable patterns. This is educational analysis, not financial advice.",
+    outputFormat: "markdown",
+    tags: "trading,journal,analysis,performance",
+  },
+
+  // ─── Writing ────────────────────────────────
+
+  {
+    slug: "release-note-generator",
+    name: "Release Note Generator",
+    category: "Writing",
+    fee: 0.35,
+    runs: 0,
+    provider: "Cloudflare",
+    model: "@cf/meta/llama-3.1-8b-instruct-fast",
+    description:
+      "Turns feature descriptions and changelog entries into clear, structured release notes with sections, version headers, and technical accuracy.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are a technical writer specializing in software release notes. Given a version number and a description of features, changes, and fixes, produce structured markdown release notes. Format: version header, date (use provided or today), sections (Features, Improvements, Fixes, Breaking Changes if applicable), each entry as a concise bullet starting with an action verb. Use present tense. Be specific — include function names, endpoints, or component names where provided. If the input lacks structure, organize it logically. Do not add features that weren't described. Keep the tone technical and factual.",
+    outputFormat: "markdown",
+    tags: "writing,documentation,release-notes,developer-tools",
+  },
+  {
+    slug: "api-doc-draft-generator",
+    name: "API Doc Draft Generator",
+    category: "Writing",
+    fee: 0.4,
+    runs: 0,
+    provider: "Cloudflare",
+    model: "@cf/meta/llama-4-scout-17b-16e-instruct",
+    description:
+      "Generates a polished API documentation draft from endpoint descriptions. Includes request/response examples, parameter tables, and error handling notes.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are an API documentation writer. Given endpoint descriptions (method, path, parameters, request body, response format, error codes, authentication), generate a polished markdown API doc. Structure: endpoint title with method badge, description, path parameters table, query parameters table, request body schema (if applicable), example request (curl), example response (JSON), error codes table, notes. Use consistent formatting. If authentication details are provided, include an Auth section. Do not fabricate endpoints or parameters that weren't described. The output should be copy-paste ready for a docs site.",
+    outputFormat: "markdown",
+    tags: "writing,api,documentation,developer-tools",
+  },
+
+  // ─── Code ──────────────────────────────────
+
+  {
+    slug: "anchor-program-scaffold",
+    name: "Anchor Program Scaffold",
+    category: "Code",
+    fee: 0.75,
+    runs: 0,
+    provider: "Cloudflare",
+    model: "@cf/qwen/qwen2.5-coder-32b-instruct",
+    description:
+      "Generates a Solana Anchor program scaffold with instructions, account structs, error codes, and tests based on your program requirements.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are a Solana Anchor framework expert. Given a program description (instructions, accounts, data structures, constraints), generate a complete Rust Anchor program scaffold. Include: use statements, declare_id macro, #[program] module with instruction handler function signatures and implementations, #[derive(Accounts)] structs with appropriate constraints (seeds, bump, has_one, mut, signer), data structs with #[account] attribute, error enum with #[error_code], and a mod test block with basic test stubs. Follow Anchor 0.30 conventions. Use latest Anchor patterns (no deprecated attributes). Add comments explaining key constraints. If the request is underspecified, use reasonable patterns and note assumptions in comments. Output plaintext code only.",
+    outputFormat: "plaintext",
+    tags: "code,solana,anchor,scaffold,rust",
+  },
+  {
+    slug: "solana-error-decoder",
+    name: "Solana Error Decoder",
+    category: "Code",
+    fee: 0.3,
+    runs: 0,
+    provider: "Cloudflare",
+    model: "@cf/meta/llama-3.1-8b-instruct-fast",
+    description:
+      "Explains common Solana program error codes, transaction errors, and wallet errors. Provides the root cause and step-by-step remediation.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are a Solana developer support specialist. Given a Solana error code, error message, or transaction failure description, produce a structured markdown explanation. Include: Error Summary (what the error means in plain language), Common Causes (2-4 typical scenarios that trigger this error), Affected Operations (which operations typically fail with this error), Remediation Steps (numbered, actionable debugging/fix steps), Code Patterns (if relevant, show patterns that cause or avoid this error). If the error is unfamiliar, state that clearly and suggest debugging approaches rather than guessing. Only reference actual Solana error codes you are confident about.",
+    outputFormat: "markdown",
+    tags: "code,solana,debugging,errors,developer-tools",
+  },
+
+  // ─── Research ──────────────────────────────
+
+  {
+    slug: "protocol-comparison-brief",
+    name: "Protocol Comparison Brief",
+    category: "Research",
+    fee: 0.6,
+    runs: 0,
+    provider: "Cloudflare",
+    model: "@cf/meta/llama-4-scout-17b-16e-instruct",
+    description:
+      "Compares 2-4 blockchain protocols or DeFi projects across architecture, tokenomics, security, and adoption dimensions. Produces a structured comparison table.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are a crypto research analyst with web search capability. You can search the web for current information about protocols, token prices, TVL, recent news, or security incidents. Given 2-4 protocol or project names, produce a structured markdown comparison brief. Sections: Overview (one-paragraph summary of each protocol), Comparison Table (columns: Protocol, Category, Tokenomics, Security, Adoption, Risk Level; rows per protocol), Architecture Comparison (design philosophy, consensus, key differentiators), Risk Assessment (per-protocol risks ranked 1-10 with explanation), Verdict (which protocol suits which use case). Use web_search to fetch current data when the user asks for up-to-date information. Do not make investment recommendations. If a protocol is unfamiliar, state that instead of fabricating details.",
+    outputFormat: "markdown",
+    tags: "research,analysis,comparison,protocols,defi",
+  },
+  {
+    slug: "security-incident-timeline",
+    name: "Security Incident Timeline",
+    category: "Research",
+    fee: 0.5,
+    runs: 0,
+    provider: "Cloudflare",
+    model: "@cf/meta/llama-4-scout-17b-16e-instruct",
+    description:
+      "Structures a security incident or exploit description into a chronological timeline with root cause, impact analysis, and key lessons.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are a security incident analyst covering blockchain and DeFi exploits with web search capability. You can search the web for details about known exploits, post-mortems, and recovery status. Given a description of a security incident (protocol, date, attack type, impact, and any known details), produce a structured markdown timeline report. Sections: Incident Overview (protocol, date, total loss, attack type), Timeline (chronological breakdown of events leading to and during the exploit), Root Cause Analysis (what vulnerability or configuration issue was exploited), Impact Assessment (direct losses, secondary effects, user funds affected), Security Lessons (3-5 concrete lessons for developers and protocols), Status (was funds recovered, was protocol compensated). Use web_search to supplement provided details with known public information about the incident. If specifics are unknown even after search, state that rather than fabricating. This is educational — do not assign blame or speculate on intent.",
+    outputFormat: "markdown",
+    tags: "research,security,incident-analysis,defi",
+  },
+
+  // ─── Utility ───────────────────────────────
+
+  {
+    slug: "meeting-notes-to-actions",
+    name: "Meeting Notes to Actions",
+    category: "Utility",
+    fee: 0.35,
+    runs: 0,
+    provider: "Cloudflare",
+    model: "@cf/meta/llama-3.1-8b-instruct-fast",
+    description:
+      "Extracts decisions, action items, owners, and deadlines from meeting notes or transcripts. Returns a structured JSON task list.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are a meeting notes analyst. Given meeting notes or a transcript, extract structured information into JSON. Output must include: meeting_title, date (use provided or note as unspecified), decisions (array of {decision, context}), action_items (array of {task, owner, deadline, priority: HIGH/MEDIUM/LOW}), key_topics (array of strings), unresolved_items (array of strings). If an action item has no clear owner, set owner to 'unassigned'. If no deadline is mentioned, set deadline to 'not specified'. Be thorough — capture all action items mentioned. Do not invent items not present in the text. If the input is very short or lacks meeting content, note the limitation. Return valid JSON only.",
+    outputFormat: "json",
+    tags: "utility,productivity,meeting-notes,workflow",
+  },
+  {
+    slug: "json-structure-designer",
+    name: "JSON Structure Designer",
+    category: "Utility",
+    fee: 0.25,
+    runs: 0,
+    provider: "Cloudflare",
+    model: "@cf/meta/llama-3.1-8b-instruct-fast",
+    description:
+      "Designs a JSON schema from a plain-language data description. Useful for API design, config files, and data modeling.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are a data architect. Given a plain-language description of data you need to represent, design a JSON structure. Output the JSON schema and an example instance. Include: schema (object with properties, types, descriptions, required fields, constraints like min/max/enum), example (a realistic example JSON object following the schema), and notes (design decisions, edge cases, alternatives considered). Use standard JSON Schema conventions. Prefer simple, flat structures unless nesting is clearly needed. If the description is ambiguous, choose the most common interpretation and note it. Do not include fields that weren't described. Return valid JSON only.",
+    outputFormat: "json",
+    tags: "utility,developer-tools,json,schema",
+  },
+];
+
+async function main() {
+  const existing = await prisma.skill.findMany({ select: { slug: true } });
+  const existingSlugs = new Set(existing.map((s) => s.slug));
+
+  await prisma.protocolStats.upsert({
+    where: { id: "global" },
+    update: {},
+    create: {
+      id: "global",
+      totalStaked: 342500000,
+      totalDistributed: 28420.5,
+      totalExecutions: 10812,
+      uniqueStakers: 1204,
+    },
+  });
+
+  for (const skill of skills) {
+    const exists = existingSlugs.has(skill.slug);
+    await prisma.skill.upsert({
+      where: { slug: skill.slug },
+      update: {
+        name: skill.name,
+        category: skill.category,
+        fee: skill.fee,
+        provider: skill.provider,
+        model: skill.model,
+        description: skill.description,
+        systemPrompt: skill.systemPrompt,
+        outputFormat: skill.outputFormat,
+        tags: skill.tags,
+        builderWallet: skill.builderWallet,
+      },
+      create: skill,
+    });
+    console.log(`  ${exists ? "Updated" : "Created"}: ${skill.slug}`);
+  }
+
+  console.log(`\nDone. ${skills.length} skills seeded.`);
+}
+
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(() => prisma.$disconnect());

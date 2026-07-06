@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Skill {
+  id            String      @id @default(cuid())
+  slug          String      @unique
+  name          String
+  category      String
+  description   String
+  tags          String      @default("")
+  provider      String
+  model         String
+  systemPrompt  String
+  outputFormat  String      @default("plaintext")
+  fee           Float
+  paymentToken  String      @default("USDC")
+  builderWallet String
+  version       String      @default("v1.0.0")
+  runs          Int         @default(0)
+  active        Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  executions    Execution[]
+}
+
+model Execution {
+  id            String   @id @default(cuid())
+  skillId       String
+  skill         Skill    @relation(fields: [skillId], references: [id])
+  walletAddress String
+  input         String
+  output        String
+  feePaid       Float
+  status        String   @default("success")
+  txSignature   String?
+  createdAt     DateTime @default(now())
+}
+
+model StakePosition {
+  id             String   @id @default(cuid())
+  walletAddress  String   @unique
+  amount         Float    @default(0)
+  totalClaimed   Float    @default(0)
+  pendingRewards Float    @default(0)
+  stakedAt       DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model ProtocolStats {
+  id               String @id @default("global")
+  totalStaked      Float  @default(0)
+  totalDistributed Float  @default(0)
+  totalExecutions  Int    @default(0)
+  uniqueStakers    Int    @default(0)
+}

@@ -1,0 +1,277 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   SolKernal — Design Tokens
+   Light is the default; `.dark` on <html> swaps the palette.
+   Colors are space-separated RGB triplets to support /alpha.
+   ============================================================ */
+@layer base {
+  :root {
+    /* Surfaces */
+    --bg-primary: 255 255 255;
+    --bg-subtle: 248 248 249;
+    --bg-hover: 240 240 243;
+    --bg-elevated: 255 255 255;
+    --bg-inverse: 12 12 14;
+
+    /* Text */
+    --text-primary: 14 14 16;
+    --text-secondary: 82 82 91;
+    --text-tertiary: 99 99 107;
+    --text-inverse: 250 250 250;
+
+    /* Borders */
+    --border: 228 228 231;
+    --border-subtle: 240 240 242;
+    --border-focused: 14 14 16;
+    --border-strong: 24 24 27;
+
+    /* Accent — Solana violet, accessible (white text ≥ 4.5:1) */
+    --accent: 124 58 237;
+    --accent-hover: 109 40 217;
+    --accent-subtle: 244 238 255;
+    --accent-text: 255 255 255;
+
+    /* Semantic */
+    --success: 5 150 105;
+    --success-subtle: 220 252 231;
+    --warning: 180 83 9;
+    --warning-subtle: 254 243 199;
+    --danger: 220 38 38;
+    --danger-subtle: 254 226 226;
+
+    /* Decorative */
+    --grid-line: 14 14 16;
+    --brand-1: 153 69 255; /* Solana violet */
+    --brand-2: 20 241 149; /* Solana green */
+
+    /* Elevation (light) */
+    --shadow-sm: 0 1px 2px 0 rgb(14 14 16 / 0.05);
+    --shadow: 0 1px 3px 0 rgb(14 14 16 / 0.07), 0 1px 2px -1px rgb(14 14 16 / 0.06);
+    --shadow-md: 0 8px 24px -8px rgb(14 14 16 / 0.12), 0 2px 6px -2px rgb(14 14 16 / 0.07);
+    --shadow-lg: 0 24px 56px -16px rgb(14 14 16 / 0.18), 0 8px 20px -8px rgb(14 14 16 / 0.10);
+
+    color-scheme: light;
+  }
+
+  .dark {
+    --bg-primary: 9 9 11;
+    --bg-subtle: 16 16 19;
+    --bg-hover: 28 28 32;
+    --bg-elevated: 20 20 24;
+    --bg-inverse: 250 250 250;
+
+    --text-primary: 250 250 250;
+    --text-secondary: 161 161 170;
+    --text-tertiary: 113 113 122;
+    --text-inverse: 9 9 11;
+
+    --border: 38 38 43;
+    --border-subtle: 28 28 32;
+    --border-focused: 244 244 245;
+    --border-strong: 63 63 70;
+
+    --accent: 167 139 250;
+    --accent-hover: 196 181 253;
+    --accent-subtle: 32 27 51;
+    --accent-text: 12 12 14;
+
+    --success: 52 211 153;
+    --success-subtle: 8 32 24;
+    --warning: 251 191 36;
+    --warning-subtle: 41 31 10;
+    --danger: 248 113 113;
+    --danger-subtle: 41 18 18;
+
+    --grid-line: 250 250 250;
+
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.4);
+    --shadow-md: 0 10px 30px -10px rgb(0 0 0 / 0.65), 0 2px 8px -2px rgb(0 0 0 / 0.5);
+    --shadow-lg: 0 28px 64px -16px rgb(0 0 0 / 0.7), 0 8px 24px -8px rgb(0 0 0 / 0.55);
+
+    color-scheme: dark;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-bg-primary text-text-primary font-sans text-body;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1 { @apply text-h1; }
+  h2 { @apply text-h2; }
+  h3 { @apply text-h3; }
+
+  code, pre, kbd {
+    @apply font-mono text-mono;
+  }
+
+  * {
+    border-color: rgb(var(--border));
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--accent));
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: rgb(var(--accent) / 0.25);
+    color: rgb(var(--text-primary));
+  }
+
+  /* Custom scrollbar — quiet, premium */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--border-strong)) transparent;
+  }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--border-strong));
+    border: 3px solid rgb(var(--bg-primary));
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: rgb(var(--text-tertiary)); }
+}
+
+/* ============================================================
+   Premium utilities
+   ============================================================ */
+@layer utilities {
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Brand gradient text — used ONLY for the SolKernal wordmark moment */
+  .text-brand-gradient {
+    background-image: linear-gradient(
+      100deg,
+      rgb(var(--brand-1)) 0%,
+      rgb(var(--accent)) 40%,
+      rgb(var(--brand-2)) 120%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Blueprint grid — communicates "on-chain registry / kernel" structure */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgb(var(--grid-line) / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(var(--grid-line) / 0.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .bg-grid-sm {
+    background-image:
+      linear-gradient(to right, rgb(var(--grid-line) / 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(var(--grid-line) / 0.04) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  /* Dotted matrix — subtle texture for hero/section backdrops */
+  .bg-dots {
+    background-image: radial-gradient(rgb(var(--grid-line) / 0.10) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  /* Fade a backdrop out toward edges */
+  .mask-fade-y {
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 80%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 80%, transparent);
+  }
+  .mask-fade-edges {
+    -webkit-mask-image: radial-gradient(ellipse 75% 75% at 50% 40%, #000 55%, transparent 100%);
+    mask-image: radial-gradient(ellipse 75% 75% at 50% 40%, #000 55%, transparent 100%);
+  }
+
+  /* Hairline divider that adapts to theme */
+  .hairline { height: 1px; background: rgb(var(--border)); }
+
+  /* Subtle film grain for premium depth (pure CSS, no asset) */
+  .noise::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+  }
+
+  /* Card lift on hover */
+  .lift {
+    transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s cubic-bezier(0.16,1,0.3,1), border-color 0.2s ease;
+  }
+  .lift:hover { transform: translateY(-3px); }
+
+  /* Animated focus/hover underline for links */
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.3s cubic-bezier(0.16,1,0.3,1);
+  }
+  .link-underline:hover { background-size: 100% 1px; }
+}
+
+/* Reveal-on-scroll base state (progressively enhanced; visible by default) */
+.reveal {
+  opacity: 1;
+}
+
+/* ============================================================
+   Solana wallet-adapter modal — themed to match the system
+   ============================================================ */
+.wallet-adapter-modal-wrapper {
+  background: rgb(var(--bg-elevated)) !important;
+  border: 1px solid rgb(var(--border)) !important;
+  border-radius: 12px !important;
+  box-shadow: var(--shadow-lg) !important;
+  font-family: var(--font-inter), sans-serif !important;
+}
+.wallet-adapter-modal-title { color: rgb(var(--text-primary)) !important; }
+.wallet-adapter-modal-list .wallet-adapter-button {
+  background: rgb(var(--bg-subtle)) !important;
+  color: rgb(var(--text-primary)) !important;
+  border: 1px solid rgb(var(--border)) !important;
+  border-radius: 8px !important;
+}
+.wallet-adapter-modal-list .wallet-adapter-button:hover {
+  background: rgb(var(--bg-hover)) !important;
+}
+.wallet-adapter-modal-button-close {
+  background: rgb(var(--bg-subtle)) !important;
+}
+.wallet-adapter-modal-button-close svg { fill: rgb(var(--text-secondary)) !important; }
+
+/* ============================================================
+   Respect reduced-motion globally
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  html { scroll-behavior: auto; }
+}

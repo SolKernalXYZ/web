@@ -1,0 +1,76 @@
+# Sensitive and internal files
+/FINAL_QA_REPORT.md
+/PRODUCTION_ENGINEERING_SKILL.md.txt
+/Project Details.txt
+/solana_project_spec.md
+*.md.txt
+*_internal.*
+*_private.*
+
+# Environment files - keep only examples
+.env
+.env.*
+!.env.example
+!.env.local.example
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+.yarn/
+
+# Testing
+coverage/
+*.log
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Production & Deployment
+.vercel/
+*.tsbuildinfo
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# IDE & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-*
+.vs/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
+.cache/
+
+# Build artifacts
+*.tsbuildinfo
+tsconfig.tsbuildinfo

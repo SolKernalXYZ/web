@@ -1,0 +1,66 @@
+{
+  "name": "solkernal-web",
+  "version": "1.0.0",
+  "description": "AI Skill Operating System on Solana - Web Application",
+  "author": "SolKernalXYZ",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SolKernalXYZ/web.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SolKernalXYZ/web/issues"
+  },
+  "homepage": "https://solkernal.xyz",
+  "keywords": [
+    "solana",
+    "ai",
+    "blockchain",
+    "skills",
+    "marketplace",
+    "llm",
+    "web3",
+    "nextjs"
+  ],
+  "private": false,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "postinstall": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "npx tsx prisma/seed.ts",
+    "db:reset": "prisma migrate reset --force"
+  },
+  "prisma": {
+    "seed": "npx tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "@solana/wallet-adapter-base": "^0.9.23",
+    "@solana/wallet-adapter-phantom": "^0.9.24",
+    "@solana/wallet-adapter-react": "^0.15.35",
+    "@solana/wallet-adapter-react-ui": "^0.9.35",
+    "@solana/web3.js": "^1.95.8",
+    "framer-motion": "^11.18.2",
+    "lottie-web": "5.12.2",
+    "next": "14.2.35",
+    "openai": "^6.45.0",
+    "prisma": "^5.22.0",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "dotenv": "^17.4.2",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.35",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "tsx": "^4.22.4",
+    "typescript": "^5"
+  }
+}
