@@ -116,7 +116,7 @@ export default function SkillsPage() {
       </fieldset>
 
       <fieldset>
-        <legend className="mb-2.5 text-tiny font-semibold uppercase tracking-[0.14em] text-text-tertiary">Fee range (USDC)</legend>
+        <legend className="mb-2.5 text-tiny font-semibold uppercase tracking-[0.14em] text-text-tertiary">Fee range ($SKRN)</legend>
         <div className="flex items-center gap-2">
           <input type="number" placeholder="Min" value={feeMin} onChange={(e) => setFeeMin(e.target.value)} step="0.01" className={fieldCls} aria-label="Minimum fee" />
           <span className="text-text-tertiary">–</span>
@@ -242,7 +242,7 @@ export default function SkillsPage() {
                   <article className="lift flex h-full flex-col rounded-lg border border-border bg-bg-subtle p-5 hover:border-border-focused hover:shadow-md">
                     <div className="flex items-center justify-between">
                       <Badge tone="accent" mono>{skill.category}</Badge>
-                      <span className="font-mono text-small font-semibold text-text-primary">{skill.fee.toFixed(2)} USDC</span>
+                      <span className="font-mono text-small font-semibold text-text-primary">500 $SKRN</span>
                     </div>
                     <h2 className="mt-3 flex items-center gap-1.5 font-semibold text-text-primary">
                       {skill.name}

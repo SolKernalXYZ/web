@@ -7,7 +7,7 @@ import { SearchIcon, WalletIcon, BoltIcon, CheckIcon, ArrowRight } from '@/compo
 
 export const metadata: Metadata = {
   title: 'Run Skills',
-  description: 'Execute any AI skill on the SolKernal network. Pay in USDC or SOL, get results in seconds.',
+  description: 'Execute any AI skill on the SolKernal network. Pay with a Solana wallet, get results in seconds.',
 };
 
 const steps = [
@@ -18,7 +18,7 @@ const steps = [
 ];
 
 const specs = [
-  ['Payment', 'USDC or SOL'],
+  ['Payment', '$SKRN'],
   ['Latency', '< 5s end-to-end'],
   ['Providers', 'Cloudflare Workers AI'],
   ['Receipt', 'On-chain PDA'],

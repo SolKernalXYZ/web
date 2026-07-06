@@ -15,22 +15,22 @@ import {
 
 const navCards = [
   { href: '/skills', title: 'Skills', ext: 'db', Icon: SkillsIcon, desc: 'Browse the on-chain skill registry. Filter by category, provider, and execution cost.' },
-  { href: '/run', title: 'Run', ext: 'exe', Icon: RunIcon, desc: 'Execute any registered skill. Pay in USDC or SOL. Get results in seconds.' },
-  { href: '/stake', title: 'Stake', ext: 'db', Icon: StakeIcon, desc: 'Stake $SKRN tokens. Earn 50% of all protocol fees paid in USDC.' },
+  { href: '/run', title: 'Run', ext: 'exe', Icon: RunIcon, desc: 'Execute any registered skill on Solana. Get results in seconds.' },
+  { href: '/stake', title: 'Stake', ext: 'db', Icon: StakeIcon, desc: 'Stake $SKRN tokens. Earn 50% of all protocol fees paid in $SKRN.' },
   { href: '/submit', title: 'Submit', ext: 'md', Icon: SubmitIcon, desc: 'Publish your AI skill to the registry. Set pricing. Earn per execution.' },
 ];
 
 const features = [
   { Icon: RegistryIcon, title: 'On-chain Registry', desc: 'Every skill is a Solana account. Immutable metadata, versioned prompts, transparent pricing stored on-chain.' },
   { Icon: BlinkIcon, title: 'Blink Execution', desc: 'Execute any skill directly from X/Twitter via Solana Blinks. No app required. Share a link, run AI.' },
-  { Icon: YieldIcon, title: 'Real Yield', desc: '50% of all execution fees distributed to $SKRN stakers in USDC. No inflation. No emissions. Pure revenue share.' },
+  { Icon: YieldIcon, title: 'Real Yield', desc: '50% of all execution fees distributed to $SKRN stakers in $SKRN. No inflation. No emissions. Pure revenue share.' },
   { Icon: ReceiptIcon, title: 'Execution Receipts', desc: 'Every execution produces an on-chain receipt. Proof of compute, cost, provider, and output hash.' },
   { Icon: RouterIcon, title: 'Multi-provider LLM', desc: 'Skills route to the best LLM model. Llama, Qwen, DeepSeek via Cloudflare Workers AI. Failover built in.' },
   { Icon: ComposeIcon, title: 'Composable Skills', desc: 'Chain skills together. Output of one feeds into the next. Build complex AI workflows from primitives.' },
 ];
 
 const steps = [
-  { n: '01', title: 'Developer publishes skill', desc: 'Upload prompt template, set pricing in USDC, choose LLM provider. Skill registered on Solana.' },
+  { n: '01', title: 'Developer publishes skill', desc: 'Upload prompt template, set pricing in $SKRN, choose LLM provider. Skill registered on Solana.' },
   { n: '02', title: 'User triggers execution', desc: 'Via app, API, or Solana Blink on X/Twitter. Payment held in escrow.' },
   { n: '03', title: 'Orchestrator routes to LLM', desc: 'SolKernal picks the optimal provider, injects user input, executes the prompt.' },
   { n: '04', title: 'Result delivered, fees split', desc: 'User gets output. 50% fee to developer, 50% to staker pool. Receipt minted on-chain.' },
@@ -39,7 +39,7 @@ const steps = [
 const tiers = [
   { hold: '100K $SKRN', perk: 'Access to premium skills' },
   { hold: '500K $SKRN', perk: 'Reduced execution fees' },
-  { hold: 'Any amount staked', perk: 'Earn 50% protocol revenue in USDC' },
+  { hold: 'Any amount staked', perk: 'Earn 50% protocol revenue in $SKRN' },
 ];
 
 // Revalidate landing stats at most once per minute (ISR) so the figures stay
@@ -108,7 +108,7 @@ export default async function Home() {
             <dl className="mt-12 grid animate-fade-up grid-cols-3 gap-px overflow-hidden rounded-lg border border-border bg-border [animation-delay:240ms]">
               {[
                 { v: String(stats.skillCount), l: 'Skills Live' },
-                { v: '0.5', l: 'USDC / Exec' },
+                { v: '500', l: '$SKRN / run' },
                 { v: '50%', l: 'To Stakers' },
               ].map((s) => (
                 <div key={s.l} className="bg-bg-primary px-4 py-4">
@@ -274,12 +274,12 @@ export default async function Home() {
                 <SectionHeading eyebrow="Real Yield" title="Stake & earn" />
                 <p className="mt-3 max-w-prose text-body text-text-secondary">
                   Stake $SKRN into the protocol vault. Every time a skill is executed anywhere on the network,
-                  50% of the fee is collected into the staker pool and distributed pro-rata in USDC. No lockups —
+                  50% of the fee is collected into the staker pool and distributed pro-rata in $SKRN. No lockups —
                   withdraw anytime.
                 </p>
                 <div className="mt-6 grid gap-4 sm:grid-cols-3">
                   <StatBox value={`${compact(stats.totalStaked)}`} label="$SKRN Staked" icon={<StakeIcon size={16} />} />
-                  <StatBox value={`$${compact(stats.totalDistributed)}`} label="Distributed" positive icon={<YieldIcon size={16} />} />
+                  <StatBox value={`${compact(stats.totalDistributed)}`} label="Distributed" positive icon={<YieldIcon size={16} />} />
                   <StatBox value={stats.uniqueStakers.toLocaleString()} label="Stakers" icon={<ReceiptIcon size={16} />} />
                 </div>
                 <div className="mt-6">

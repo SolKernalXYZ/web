@@ -21,7 +21,7 @@ export default function SubmitPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [form, setForm] = useState({
-    name: '', category: '', description: '', tags: '', provider: 'Cloudflare', model: '', systemPrompt: '', outputFormat: '', fee: '', paymentToken: 'USDC',
+    name: '', category: '', description: '', tags: '', provider: 'Cloudflare', model: '', systemPrompt: '', outputFormat: '', fee: '', paymentToken: '$SKRN',
   });
 
   const set = (key: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
@@ -119,11 +119,11 @@ export default function SubmitPage() {
         <section className="rounded-xl border border-border bg-bg-subtle p-6">
           <h2 className="mb-5 flex items-center gap-2 text-h3"><span className="font-mono text-accent">03</span> Pricing</h2>
           <div className="space-y-4">
-            <Input label="Execution fee (USDC) *" type="number" min="0.10" step="0.01" value={form.fee} onChange={set('fee')} placeholder="0.50" />
+            <Input label="Execution fee ($SKRN) *" type="number" min="0.10" step="0.01" value={form.fee} onChange={set('fee')} placeholder="500" />
             <fieldset>
               <legend className="mb-2 text-small font-medium text-text-secondary">Payment token</legend>
               <div className="flex gap-3">
-                {['USDC', 'SOL'].map((tok) => (
+                {['$SKRN'].map((tok) => (
                   <label
                     key={tok}
                     className={`flex flex-1 cursor-pointer items-center gap-2 rounded-md border px-4 py-3 text-body transition-colors ${form.paymentToken === tok ? 'border-accent bg-accent-subtle text-text-primary' : 'border-border text-text-secondary hover:border-border-strong'}`}

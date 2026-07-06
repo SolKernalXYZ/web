@@ -171,7 +171,7 @@ export default function SkillDetailPage({ params }: { params: { slug: string } }
           <div className="sticky top-20 space-y-5 rounded-xl border border-border bg-bg-subtle p-6 shadow-sm">
             <div className="flex items-baseline justify-between">
               <span className="font-mono text-tiny uppercase tracking-[0.16em] text-text-tertiary">Execution fee</span>
-              <span className="font-mono text-h2 text-text-primary">{skill.fee.toFixed(2)} <span className="text-body text-text-tertiary">USDC</span></span>
+              <span className="font-mono text-h2 text-text-primary">500 <span className="text-body text-text-tertiary">$SKRN</span></span>
             </div>
 
             <div>
@@ -207,7 +207,7 @@ export default function SkillDetailPage({ params }: { params: { slug: string } }
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between font-mono text-small">
                   <span className="text-text-secondary">{row.label}</span>
-                  <span className="text-text-primary">{row.value.toFixed(2)} USDC</span>
+                  <span className="text-text-primary">{row.value.toFixed(2)} $SKRN</span>
                 </div>
               ))}
             </div>

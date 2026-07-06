@@ -33,7 +33,7 @@ const phases = [
     items: [
       "Solana smart contracts (Anchor programs)",
       "$SKRN Token-2022 deployment",
-      "Real USDC payment integration",
+      "Real $SKRN payment integration",
       "Solana Blinks/Actions generation",
       "On-chain execution receipts (PDA accounts)",
       "Skill chaining (composable pipelines)",
