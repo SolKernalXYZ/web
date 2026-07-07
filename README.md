@@ -13,7 +13,7 @@
 
 **`$SKRN`**: `9LnqE9nevGsDHqs7bhJSyMzXwxdQJ2x4ypJNreEZpump`
 
-[**Try Demo →**](https://solkernal.xyz/skills) • [**Read Docs →**](https://docs.solkernal.xyz) • [**Submit Skill →**](https://solkernal.xyz/submit)
+[**Try Demo →**](https://solkernal.xyz/skills) • [**Read Docs →**](https://solkernal.xyz/docs) • [**Submit Skill →**](https://solkernal.xyz/submit)
 
 </div>
 
@@ -378,7 +378,7 @@ Inspired by:
 ## 🔗 Links
 
 - **Website:** [solkernal.xyz](https://solkernal.xyz)
-- **Documentation:** [docs.solkernal.xyz](https://docs.solkernal.xyz)
+- **Documentation:** [docs.solkernal.xyz](https://solkernal.xyz/docs)
 - **Twitter:** [@SolKernal_](https://x.com/SolKernal_)
 - **GitHub:** [github.com/SolKernalXYZ](https://github.com/SolKernalXYZ)
 - **Email:** [hello@solkernal.xyz](mailto:hello@solkernal.xyz)
