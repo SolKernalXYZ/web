@@ -23,6 +23,9 @@ const MODELS_WITH_TOOLS: string[] = [
   "@cf/zai-org/glm-4.7-flash",
   "@cf/openai/gpt-oss-120b",
   "@cf/openai/gpt-oss-20b",
+  "gemini-2.5-flash",
+  "gemini-2.5-flash-lite",
+  "gemini-2.5-pro",
 ];
 
 function supportsTools(model: string) {
@@ -31,6 +34,7 @@ function supportsTools(model: string) {
 
 type CloudflareCreds = { provider: "cloudflare"; apiKey: string; accountId: string };
 type GroqCreds = { provider: "groq"; apiKey: string };
+type GoogleCreds = { provider: "google"; apiKey: string };
 
 function getCloudflareCredentials(): CloudflareCreds | null {
   const apiKey = process.env.CLOUDFLARE_API_TOKEN;
@@ -45,10 +49,29 @@ function getGroqCredentials(): GroqCreds | null {
   return { provider: "groq", apiKey };
 }
 
+function getGoogleCredentials(): GoogleCreds | null {
+  const apiKey = process.env.GOOGLE_API_KEY;
+  if (!apiKey) return null;
+  return { provider: "google", apiKey };
+}
+
 let cfClient: OpenAI | null = null;
 let groqClient: OpenAI | null = null;
+let googleClient: OpenAI | null = null;
 
 function getClient(provider: string) {
+  if (provider === "google") {
+    const creds = getGoogleCredentials();
+    if (!creds) return null;
+    if (!googleClient) {
+      googleClient = new OpenAI({
+        apiKey: creds.apiKey,
+        baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
+      });
+    }
+    return googleClient;
+  }
+
   if (provider === "groq") {
     const creds = getGroqCredentials();
     if (!creds) return null;
@@ -81,7 +104,7 @@ function mockResponse(req: LLMRequest, reason: string): LLMResponse {
     `Skill model: ${req.model}`,
     `Input received: ${preview || "(empty)"}`,
     "",
-    "Configure CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID or GROQ_API_KEY to enable real execution.",
+    "Configure CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID, GROQ_API_KEY, or GOOGLE_API_KEY to enable real execution.",
   ].join("\n");
   return { output, mocked: true };
 }
@@ -118,8 +141,13 @@ async function callLLM(
 }
 
 export async function executeLLM(req: LLMRequest): Promise<LLMResponse> {
-  const provider = req.provider?.toLowerCase() === "groq" ? "groq" : "cloudflare";
+  const provider = req.provider?.toLowerCase() === "groq" ? "groq"
+    : req.provider?.toLowerCase() === "google" ? "google"
+    : "cloudflare";
 
+  if (provider === "google" && !getGoogleCredentials()) {
+    return mockResponse(req, "missing GOOGLE_API_KEY");
+  }
   if (provider === "groq" && !getGroqCredentials()) {
     return mockResponse(req, "missing GROQ_API_KEY");
   }

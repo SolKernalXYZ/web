@@ -99,12 +99,26 @@ export default function SubmitPage() {
         <section className="rounded-xl border border-border bg-bg-subtle p-6">
           <h2 className="mb-5 flex items-center gap-2 text-h3"><span className="font-mono text-accent">02</span> Model configuration</h2>
           <div className="space-y-4">
+            <Select label="LLM Provider *" value={form.provider} onChange={(e) => { set('provider')(e); setForm(f => ({ ...f, model: '' })); }}>
+              <option value="Cloudflare">Cloudflare Workers AI</option>
+              <option value="Google">Google Gemini</option>
+            </Select>
             <Select label="Model *" value={form.model} onChange={set('model')}>
               <option value="">Select model</option>
-              <option value="@cf/meta/llama-3.1-8b-instruct-fast">Llama 3.1 8B (General)</option>
-              <option value="@cf/meta/llama-4-scout-17b-16e-instruct">Llama 4 Scout 17B (Complex)</option>
-              <option value="@cf/qwen/qwen2.5-coder-32b-instruct">Qwen 2.5 Coder 32B (Code)</option>
-              <option value="@cf/deepseek-ai/deepseek-r1-distill-qwen-32b">DeepSeek R1 32B (Reasoning)</option>
+              {form.provider === 'Google' ? (
+                <>
+                  <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                  <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash-Lite</option>
+                  <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+                </>
+              ) : (
+                <>
+                  <option value="@cf/meta/llama-3.1-8b-instruct-fast">Llama 3.1 8B (General)</option>
+                  <option value="@cf/meta/llama-4-scout-17b-16e-instruct">Llama 4 Scout 17B (Complex)</option>
+                  <option value="@cf/qwen/qwen2.5-coder-32b-instruct">Qwen 2.5 Coder 32B (Code)</option>
+                  <option value="@cf/deepseek-ai/deepseek-r1-distill-qwen-32b">DeepSeek R1 32B (Reasoning)</option>
+                </>
+              )}
             </Select>
             <Textarea label="System prompt *" value={form.systemPrompt} onChange={set('systemPrompt')} rows={8} className="font-mono text-mono" placeholder="You are a..." />
             <Select label="Output format *" value={form.outputFormat} onChange={set('outputFormat')}>

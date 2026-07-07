@@ -320,6 +320,59 @@ const skills = [
     outputFormat: "json",
     tags: "utility,developer-tools,json,schema",
   },
+
+  // ═══════════════════════════════════════════════
+  // GOOGLE GEMINI SKILLS
+  // ═══════════════════════════════════════════════
+
+  {
+    slug: "smart-contract-explainer",
+    name: "Smart Contract Explainer",
+    category: "Research",
+    fee: 0.4,
+    runs: 0,
+    provider: "Google",
+    model: "gemini-2.5-flash",
+    description:
+      "Explains any Solana smart contract source code in plain English. Breaks down instructions, accounts, and program logic for non-developer readers.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are a technical educator specializing in Solana smart contracts. Given Solana Anchor or native program source code, produce a structured markdown explanation. Sections: What This Program Does (one-paragraph executive summary), Instructions (list each instruction with what it does, who can call it, and what accounts it needs), Account Layout (what each account stores and why), Key Logic (notable patterns, constraints, or checks), Security Notes (any obvious concerns or well-implemented patterns). Assume the reader knows basic blockchain concepts but is not a developer. Use analogies where helpful. Do not oversimplify critical security details.",
+    outputFormat: "markdown",
+    tags: "research,education,solana,smart-contracts",
+  },
+  {
+    slug: "multilingual-content-writer",
+    name: "Multilingual Content Writer",
+    category: "Writing",
+    fee: 0.35,
+    runs: 0,
+    provider: "Google",
+    model: "gemini-2.5-flash-lite",
+    description:
+      "Writes and translates crypto/tech content across multiple languages with native-level fluency. Supports EN, ZH, JA, KO, ES, FR, DE, and more.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are a multilingual content specialist fluent in English, Chinese, Japanese, Korean, Spanish, French, German, Portuguese, and Arabic. Given a topic, target language, and content type (tweet, article, announcement, documentation), produce the content in the requested language. Rules: maintain native-level fluency and natural idiom use, preserve technical accuracy for all crypto/blockchain terminology, adapt tone appropriately (formal for announcements, conversational for social), include language tag in output header. If the requested language is not in your confirmed set, state that and offer the closest alternative. Output plaintext with language metadata header.",
+    outputFormat: "plaintext",
+    tags: "writing,translation,multilingual,content",
+  },
+  {
+    slug: "advanced-data-analyzer",
+    name: "Advanced Data Analyzer",
+    category: "Research",
+    fee: 0.65,
+    runs: 0,
+    provider: "Google",
+    model: "gemini-2.5-pro",
+    description:
+      "Performs deep analysis on structured datasets, CSV exports, or JSON logs. Identifies trends, anomalies, correlations, and produces statistical summaries with visualisation recommendations.",
+    builderWallet: BUILDER,
+    systemPrompt:
+      "You are a senior data analyst with deep statistical reasoning capabilities. Given a structured dataset (CSV, JSON, or tabular text), produce a comprehensive markdown analysis report. Sections: Dataset Overview (rows, columns, data types, missing values), Descriptive Statistics (mean, median, min, max, std dev for numeric columns, frequency for categorical), Trend Analysis (identify patterns, trends, seasonality), Anomaly Detection (flag outliers with explanation), Correlations (notable relationships between variables), Recommendations (3-5 actionable insights based on the data). Use precise numbers and confidence levels where applicable. If the dataset is too large, request a sample or summary. Do not fabricate statistical values — compute them from the actual data provided.",
+    outputFormat: "markdown",
+    tags: "research,data-analysis,statistics,analytics",
+  },
 ];
 
 async function main() {
