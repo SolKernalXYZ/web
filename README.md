@@ -146,6 +146,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
 | **Primary LLM** | Cloudflare Workers AI | Serverless AI inference with OpenAI-compatible API |
+| **LLM Providers** | Groq, Google Gemini | Fast inference via OpenAI-compatible API |
 | **Fallback** | OpenAI API | GPT-4o, GPT-4 Turbo for complex skills |
 | **Local Testing** | Mock responses | Zero-cost development without API keys |
 
@@ -222,7 +223,7 @@ Visit the [marketplace](https://solkernal.xyz/skills) to discover AI skills acro
    - **Name** & **Description**
    - **Category** (DeFi, NFT, Analytics, Dev Tools)
    - **Prompt Template** (use `{{input}}` placeholders)
-   - **LLM Provider** (Cloudflare, OpenAI)
+   - **LLM Provider** (Cloudflare, Groq, Google)
    - **Price** (in USDC)
 3. Submit (free on devnet, small fee on mainnet)
 4. Your skill goes live instantly with a generated Blink URL
@@ -259,6 +260,8 @@ NEXT_PUBLIC_SKRN_MINT_ADDRESS="9LnqE9nevGsDHqs7bhJSyMzXwxdQJ2x4ypJNreEZpump"
 # LLM Providers (optional for development)
 CLOUDFLARE_API_TOKEN=""
 CLOUDFLARE_ACCOUNT_ID=""
+GROQ_API_KEY=""
+GOOGLE_API_KEY=""
 OPENAI_API_KEY=""
 ```
 
@@ -304,8 +307,9 @@ docker run -p 3000:3000 solkernal:latest
 
 - ✅ Skill marketplace with search, filter, sort
 - ✅ Skill detail pages with execution history
-- ✅ Real LLM execution (Cloudflare Workers AI)
+- ✅ Real LLM execution (Cloudflare Workers AI, Groq, Google Gemini)
 - ✅ Mock fallback for zero-cost development
+- ✅ $SKRN token launched on pump.fun
 - ✅ Phantom wallet integration
 - ✅ Skill submission form
 - ✅ Staking dashboard (UI + mock logic)
@@ -319,7 +323,7 @@ docker run -p 3000:3000 solkernal:latest
 ### 🚧 In Progress (v2.0)
 
 - 🚧 Solana smart contracts (Anchor programs)
-- 🚧 $SKRN Token-2022 deployment
+- 🚧 $SKRN Token-2022 program deployment
 - 🚧 Real USDC payment integration
 - 🚧 Solana Blinks/Actions generation
 - 🚧 On-chain execution receipts (PDA accounts)
@@ -329,7 +333,7 @@ docker run -p 3000:3000 solkernal:latest
 
 ### 🔮 Roadmap (v3.0+)
 
-- Multi-LLM support (OpenAI, Anthropic, Llama, local models)
+- Additional LLM providers (OpenAI, Anthropic, Llama, local models)
 - Skill versioning and upgrades
 - Skill forking and remixing
 - Reputation system for builders

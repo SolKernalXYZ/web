@@ -11,8 +11,9 @@ const phases = [
     items: [
       "Skill marketplace with search, filter, sort",
       "Skill detail pages with execution history",
-      "Real LLM execution (Cloudflare Workers AI)",
+      "Real LLM execution (Cloudflare Workers AI, Groq, Google Gemini)",
       "Mock fallback for zero-cost development",
+      "$SKRN token launched on pump.fun",
       "Phantom wallet integration",
       "Skill submission form",
       "Staking dashboard (UI + mock logic)",
@@ -32,7 +33,7 @@ const phases = [
     label: "Building now",
     items: [
       "Solana smart contracts (Anchor programs)",
-      "$SKRN Token-2022 deployment",
+      "$SKRN Token-2022 program deployment",
       "Real $SKRN payment integration",
       "Solana Blinks/Actions generation",
       "On-chain execution receipts (PDA accounts)",
@@ -48,7 +49,7 @@ const phases = [
     ring: "ring-text-tertiary/15",
     label: "On the horizon",
     items: [
-      "Multi-LLM support (OpenAI, Anthropic, Llama, local models)",
+      "Additional LLM providers (OpenAI, Anthropic, Llama, local models)",
       "Skill versioning and upgrades",
       "Skill forking and remixing",
       "Reputation system for builders",
