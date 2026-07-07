@@ -11,6 +11,8 @@
 > **Deploy, execute, and compose autonomous AI skills on-chain.**  
 > A permissionless marketplace where developers publish prompt bundles, users pay per execution, and stakers earn real yield.
 
+**`$SKRN`**: `9LnqE9nevGsDHqs7bhJSyMzXwxdQJ2x4ypJNreEZpump`
+
 [**Try Demo →**](https://solkernal.xyz/skills) • [**Read Docs →**](https://docs.solkernal.xyz) • [**Submit Skill →**](https://solkernal.xyz/submit)
 
 </div>
