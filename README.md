@@ -146,7 +146,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
 | **Primary LLM** | Cloudflare Workers AI | Serverless AI inference with OpenAI-compatible API |
-| **LLM Providers** | Groq, Google Gemini | Fast inference via OpenAI-compatible API |
+| **LLM Providers** | Groq, Google Gemini, Grok (xAI) | Fast inference via OpenAI-compatible API |
 | **Fallback** | OpenAI API | GPT-4o, GPT-4 Turbo for complex skills |
 | **Local Testing** | Mock responses | Zero-cost development without API keys |
 
@@ -263,6 +263,7 @@ CLOUDFLARE_ACCOUNT_ID=""
 GROQ_API_KEY=""
 GOOGLE_API_KEY=""
 OPENAI_API_KEY=""
+XAI_API_KEY=""
 ```
 
 ---

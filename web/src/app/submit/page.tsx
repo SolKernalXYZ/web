@@ -102,6 +102,7 @@ export default function SubmitPage() {
             <Select label="LLM Provider *" value={form.provider} onChange={(e) => { set('provider')(e); setForm(f => ({ ...f, model: '' })); }}>
               <option value="Cloudflare">Cloudflare Workers AI</option>
               <option value="Google">Google Gemini</option>
+              <option value="Grok">Grok (xAI)</option>
             </Select>
             <Select label="Model *" value={form.model} onChange={set('model')}>
               <option value="">Select model</option>
@@ -110,6 +111,14 @@ export default function SubmitPage() {
                   <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
                   <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash-Lite</option>
                   <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+                </>
+              ) : form.provider === 'Grok' ? (
+                <>
+                  <option value="grok-4.5">Grok 4.5</option>
+                  <option value="grok-4-1-fast-reasoning">Grok 4.1 Fast (Reasoning)</option>
+                  <option value="grok-4-1-fast-non-reasoning">Grok 4.1 Fast</option>
+                  <option value="grok-3">Grok 3</option>
+                  <option value="grok-3-mini">Grok 3 Mini</option>
                 </>
               ) : (
                 <>

@@ -26,6 +26,11 @@ const MODELS_WITH_TOOLS: string[] = [
   "gemini-2.5-flash",
   "gemini-2.5-flash-lite",
   "gemini-2.5-pro",
+  "grok-4.5",
+  "grok-4-1-fast-reasoning",
+  "grok-4-1-fast-non-reasoning",
+  "grok-3",
+  "grok-3-mini",
 ];
 
 function supportsTools(model: string) {
@@ -35,6 +40,7 @@ function supportsTools(model: string) {
 type CloudflareCreds = { provider: "cloudflare"; apiKey: string; accountId: string };
 type GroqCreds = { provider: "groq"; apiKey: string };
 type GoogleCreds = { provider: "google"; apiKey: string };
+type GrokCreds = { provider: "grok"; apiKey: string };
 
 function getCloudflareCredentials(): CloudflareCreds | null {
   const apiKey = process.env.CLOUDFLARE_API_TOKEN;
@@ -55,9 +61,16 @@ function getGoogleCredentials(): GoogleCreds | null {
   return { provider: "google", apiKey };
 }
 
+function getGrokCredentials(): GrokCreds | null {
+  const apiKey = process.env.XAI_API_KEY;
+  if (!apiKey) return null;
+  return { provider: "grok", apiKey };
+}
+
 let cfClient: OpenAI | null = null;
 let groqClient: OpenAI | null = null;
 let googleClient: OpenAI | null = null;
+let grokClient: OpenAI | null = null;
 
 function getClient(provider: string) {
   if (provider === "google") {
@@ -84,6 +97,18 @@ function getClient(provider: string) {
     return groqClient;
   }
 
+  if (provider === "grok") {
+    const creds = getGrokCredentials();
+    if (!creds) return null;
+    if (!grokClient) {
+      grokClient = new OpenAI({
+        apiKey: creds.apiKey,
+        baseURL: "https://api.x.ai/v1",
+      });
+    }
+    return grokClient;
+  }
+
   const creds = getCloudflareCredentials();
   if (!creds) return null;
   if (!cfClient) {
@@ -104,7 +129,7 @@ function mockResponse(req: LLMRequest, reason: string): LLMResponse {
     `Skill model: ${req.model}`,
     `Input received: ${preview || "(empty)"}`,
     "",
-    "Configure CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID, GROQ_API_KEY, or GOOGLE_API_KEY to enable real execution.",
+    "Configure CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID, GROQ_API_KEY, GOOGLE_API_KEY, or XAI_API_KEY to enable real execution.",
   ].join("\n");
   return { output, mocked: true };
 }
@@ -140,16 +165,25 @@ async function callLLM(
   });
 }
 
+function resolveProvider(raw: string | undefined): "cloudflare" | "groq" | "google" | "grok" {
+  const p = raw?.toLowerCase().trim() ?? "";
+  if (p === "groq") return "groq";
+  if (p === "google") return "google";
+  if (p === "grok" || p === "xai" || p === "x.ai") return "grok";
+  return "cloudflare";
+}
+
 export async function executeLLM(req: LLMRequest): Promise<LLMResponse> {
-  const provider = req.provider?.toLowerCase() === "groq" ? "groq"
-    : req.provider?.toLowerCase() === "google" ? "google"
-    : "cloudflare";
+  const provider = resolveProvider(req.provider);
 
   if (provider === "google" && !getGoogleCredentials()) {
     return mockResponse(req, "missing GOOGLE_API_KEY");
   }
   if (provider === "groq" && !getGroqCredentials()) {
     return mockResponse(req, "missing GROQ_API_KEY");
+  }
+  if (provider === "grok" && !getGrokCredentials()) {
+    return mockResponse(req, "missing XAI_API_KEY");
   }
   if (provider === "cloudflare" && !getCloudflareCredentials()) {
     return mockResponse(req, "missing Cloudflare Workers AI credentials");

@@ -21,7 +21,7 @@ type Skill = {
 };
 
 const CATEGORIES = ['DeFi', 'Trading', 'Writing', 'Code', 'Research', 'Utility'];
-const PROVIDERS = ['Cloudflare', 'Groq', 'Google'];
+const PROVIDERS = ['Cloudflare', 'Groq', 'Google', 'Grok'];
 
 export default function SkillsPage() {
   const [skills, setSkills] = useState<Skill[]>([]);

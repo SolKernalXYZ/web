@@ -181,6 +181,9 @@ export const docs: DocPage[] = [
               ["NEXT_PUBLIC_SKRN_MINT_ADDRESS", "No", "Public $SKRN mint address once the token is deployed."],
               ["CLOUDFLARE_API_TOKEN", "No", "Enables real Cloudflare Workers AI execution."],
               ["CLOUDFLARE_ACCOUNT_ID", "No", "Cloudflare account ID for the Workers AI endpoint."],
+              ["GOOGLE_API_KEY", "No", "Enables Google Gemini execution."],
+              ["GROQ_API_KEY", "No", "Enables Groq execution."],
+              ["XAI_API_KEY", "No", "Enables Grok (xAI) execution via OpenAI-compatible API."],
             ],
           },
           {
@@ -214,7 +217,7 @@ export const docs: DocPage[] = [
         title: "Service credentials",
         blocks: [
           { type: "p", text: "LLM provider keys and database credentials must stay server-side. The browser should only receive public values such as site URL, Solana RPC URL, network label, and token mint address." },
-          { type: "code", language: "bash", code: "CLOUDFLARE_API_TOKEN=...\nCLOUDFLARE_ACCOUNT_ID=...\nDATABASE_URL=file:./dev.db" },
+          { type: "code", language: "bash", code: "CLOUDFLARE_API_TOKEN=...\nCLOUDFLARE_ACCOUNT_ID=...\nGOOGLE_API_KEY=...\nXAI_API_KEY=...\nDATABASE_URL=file:./dev.db" },
         ],
       },
     ],
