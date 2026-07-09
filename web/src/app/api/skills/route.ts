@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { rateLimit } from "@/lib/rateLimit";
+import { ensureCatalogPack } from "@/lib/catalogPack";
 import {
   ALLOWED_CATEGORIES,
   ALLOWED_PROVIDERS,
@@ -16,6 +17,13 @@ import {
 
 export async function GET(request: Request) {
   try {
+    // Best-effort: ensure curated pack exists (idempotent; no-op after first success).
+    try {
+      await ensureCatalogPack();
+    } catch (e) {
+      console.error("[api/skills] catalog ensure failed", e instanceof Error ? e.message : e);
+    }
+
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category");
     const provider = searchParams.get("provider");

@@ -1,5 +1,6 @@
 import type { ToolDefinition } from "./types";
 import { solanaTools } from "./solana";
+import { marketTools } from "./market";
 import { webSearchTool } from "./websearch";
 
 const toolRegistry = new Map<string, ToolDefinition>();
@@ -9,6 +10,7 @@ function register(tool: ToolDefinition) {
 }
 
 solanaTools.forEach(register);
+marketTools.forEach(register);
 register(webSearchTool);
 
 export function getAllToolDefinitions() {

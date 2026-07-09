@@ -203,7 +203,53 @@ export const solanaTools: ToolDefinition[] = [
             ? new Date(s.blockTime * 1000).toISOString()
             : null,
           status: s.confirmationStatus || "unknown",
+          err: s.err ? JSON.stringify(s.err) : null,
         })),
+      };
+    },
+  },
+  {
+    name: "get_transaction_details",
+    description:
+      "Fetch a Solana transaction by signature: success/failure, fee, log messages, and error if any. Use for failed-tx debugging.",
+    parameters: {
+      type: "object",
+      properties: {
+        signature: {
+          type: "string",
+          description: "Transaction signature (base58)",
+        },
+      },
+      required: ["signature"],
+    },
+    execute: async (args) => {
+      const signature = String(args.signature || "").trim();
+      if (!signature || signature.length < 64 || signature.length > 128) {
+        return { error: "Invalid transaction signature", signature };
+      }
+      const conn = getConnection();
+      const tx = await conn.getTransaction(signature, {
+        maxSupportedTransactionVersion: 0,
+        commitment: "confirmed",
+      });
+      if (!tx) {
+        return {
+          signature,
+          error: "Transaction not found on this RPC cluster. Check network (mainnet vs devnet).",
+        };
+      }
+      const meta = tx.meta;
+      const logs = meta?.logMessages?.slice(0, 40) ?? [];
+      return {
+        signature,
+        slot: tx.slot,
+        blockTime: tx.blockTime ? new Date(tx.blockTime * 1000).toISOString() : null,
+        err: meta?.err ? JSON.stringify(meta.err) : null,
+        status: meta?.err ? "failed" : "success",
+        feeLamports: meta?.fee ?? null,
+        computeUnitsConsumed: meta?.computeUnitsConsumed ?? null,
+        logMessages: logs,
+        note: logs.length === 40 ? "Log messages truncated to first 40 lines." : undefined,
       };
     },
   },
