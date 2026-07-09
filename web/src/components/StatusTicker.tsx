@@ -1,12 +1,12 @@
 const items = [
-  "Premium tier — 10M $SKRN",
-  "Priority tier — 100M $SKRN",
-  "Earn 50% of execution fees",
-  "Publish a skill in under 5 min",
-  "24 skills live",
-  "Settlement ~400ms",
-  "Powered by Cloudflare Workers AI",
-  "v1.0.0",
+  "Web marketplace live",
+  "Multi-provider LLM execution",
+  "Mock fallback when keys missing",
+  "On-chain settlement coming next",
+  "Publish a skill in minutes",
+  "Docs at /docs",
+  "Built for Solana",
+  "v1 web foundation",
 ];
 
 function Track() {

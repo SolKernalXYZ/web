@@ -21,7 +21,11 @@ const columns: { heading: string; links: { label: string; href: string; external
       { label: "API Reference", href: "/docs/api-overview" },
       { label: "How it works", href: "/#how-it-works" },
       { label: "$SKRN Token", href: "/#token" },
-      { label: "Buy on Pump.fun", href: "https://pump.fun", external: true },
+      {
+        label: "Buy on Pump.fun",
+        href: "https://pump.fun/coin/9LnqE9nevGsDHqs7bhJSyMzXwxdQJ2x4ypJNreEZpump",
+        external: true,
+      },
     ],
   },
 ];
@@ -93,7 +97,7 @@ export default function Footer() {
           <p className="font-mono text-mono-sm text-text-tertiary">© {new Date().getFullYear()} SolKernal — Built on Solana</p>
           <p className="flex items-center gap-2 font-mono text-mono-sm text-text-tertiary">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-success" />
-            All systems operational
+            Web app live · on-chain settlement next
           </p>
         </div>
       </div>

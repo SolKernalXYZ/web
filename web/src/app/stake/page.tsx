@@ -14,7 +14,8 @@ export default function StakePage() {
       </div>
       <h1 className="text-h1">Staking — coming soon</h1>
       <p className="mt-3 text-body text-text-secondary">
-        $SKRN staking will be live when the token launches. Stake to earn 50% of protocol execution fees.
+        On-chain $SKRN staking is not live yet. When vault programs ship, stakers will earn a share of protocol
+        execution fees. No off-chain stake balances are accepted today.
       </p>
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <Link href="/skills">

@@ -33,11 +33,21 @@ export default function SkillsPage() {
   const [feeMax, setFeeMax] = useState('');
   const [sort, setSort] = useState('popular');
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
+    setLoadError('');
     fetch('/api/skills')
-      .then((r) => r.json())
-      .then(setSkills)
+      .then(async (r) => {
+        const data = await r.json().catch(() => null);
+        if (!r.ok) throw new Error((data && data.error) || 'Failed to load skills');
+        if (!Array.isArray(data)) throw new Error('Unexpected skills response');
+        setSkills(data);
+      })
+      .catch((e: unknown) => {
+        setSkills([]);
+        setLoadError(e instanceof Error ? e.message : 'Failed to load skills');
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -224,6 +234,17 @@ export default function SkillsPage() {
                 </div>
               ))}
             </div>
+          ) : loadError ? (
+            <EmptyState
+              title="Could not load skills"
+              description={loadError}
+              art={<LottiePlayer name="empty-registry" className="h-40 w-40" ariaLabel="Failed to load skills" />}
+              action={
+                <Button variant="secondary" onClick={() => window.location.reload()}>
+                  Retry
+                </Button>
+              }
+            />
           ) : filtered.length === 0 ? (
             <EmptyState
               title="No skills match your filters"
@@ -242,7 +263,9 @@ export default function SkillsPage() {
                   <article className="lift flex h-full flex-col rounded-lg border border-border bg-bg-subtle p-5 hover:border-border-focused hover:shadow-md">
                     <div className="flex items-center justify-between">
                       <Badge tone="accent" mono>{skill.category}</Badge>
-                      <span className="font-mono text-small font-semibold text-text-primary">500 $SKRN</span>
+                      <span className="font-mono text-small font-semibold text-text-primary">
+                        {Number(skill.fee).toLocaleString(undefined, { maximumFractionDigits: 2 })} $SKRN
+                      </span>
                     </div>
                     <h2 className="mt-3 flex items-center gap-1.5 font-semibold text-text-primary">
                       {skill.name}

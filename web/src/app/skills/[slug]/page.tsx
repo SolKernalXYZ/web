@@ -24,7 +24,8 @@ export default function SkillDetailPage({ params }: { params: { slug: string } }
   const [context, setContext] = useState("");
   const [executing, setExecuting] = useState(false);
   const [result, setResult] = useState("");
-  const [copiedBlink, setCopiedBlink] = useState(false);
+  const [mocked, setMocked] = useState(false);
+  const [copiedShare, setCopiedShare] = useState(false);
   const [copiedResult, setCopiedResult] = useState(false);
 
   useEffect(() => {
@@ -38,6 +39,7 @@ export default function SkillDetailPage({ params }: { params: { slug: string } }
     if (!connected || !publicKey || !skill) return;
     setExecuting(true);
     setResult("");
+    setMocked(false);
     try {
       const res = await fetch("/api/execute", {
         method: "POST",
@@ -45,17 +47,33 @@ export default function SkillDetailPage({ params }: { params: { slug: string } }
         body: JSON.stringify({ slug: skill.slug, input: `${input}\n${context}`.trim(), walletAddress: publicKey.toBase58() }),
       });
       const data = await res.json();
-      if (res.ok) { setResult(data.output); setSkill((s) => (s ? { ...s, runs: s.runs + 1 } : s)); }
-      else setResult(`Error: ${data.error}`);
-    } catch { setResult("Execution failed. Try again."); }
-    finally { setExecuting(false); }
+      if (res.ok) {
+        setResult(data.output);
+        setMocked(Boolean(data.mocked));
+        setSkill((s) => (s ? { ...s, runs: s.runs + 1 } : s));
+      } else {
+        setResult(`Error: ${data.error}`);
+      }
+    } catch {
+      setResult("Execution failed. Try again.");
+    } finally {
+      setExecuting(false);
+    }
   };
 
-  const blinkUrl = `https://solkernal.xyz/blink/${params.slug}`;
-  const copy = (text: string, which: "blink" | "result") => {
+  const shareUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/skills/${params.slug}`
+      : `https://solkernal.xyz/skills/${params.slug}`;
+  const copy = (text: string, which: "share" | "result") => {
     navigator.clipboard.writeText(text);
-    if (which === "blink") { setCopiedBlink(true); setTimeout(() => setCopiedBlink(false), 1600); }
-    else { setCopiedResult(true); setTimeout(() => setCopiedResult(false), 1600); }
+    if (which === "share") {
+      setCopiedShare(true);
+      setTimeout(() => setCopiedShare(false), 1600);
+    } else {
+      setCopiedResult(true);
+      setTimeout(() => setCopiedResult(false), 1600);
+    }
   };
 
   if (loading) {
@@ -128,7 +146,7 @@ export default function SkillDetailPage({ params }: { params: { slug: string } }
 
           {result && !executing && (
             <section aria-live="polite">
-              <div className="mb-2.5 flex items-center justify-between">
+              <div className="mb-2.5 flex items-center justify-between gap-3">
                 <h2 className="flex items-center gap-2 font-mono text-tiny uppercase tracking-[0.16em] text-text-tertiary">
                   {succeeded && (
                     <LottiePlayer name="success-check" loop={false} className="h-6 w-6" ariaLabel="Execution complete" />
@@ -144,6 +162,16 @@ export default function SkillDetailPage({ params }: { params: { slug: string } }
                   {copiedResult ? "Copied" : "Copy"}
                 </button>
               </div>
+              {mocked && succeeded && (
+                <div className="mb-2.5 rounded-md border border-warning/40 bg-warning-subtle px-3 py-2 text-small text-warning" role="status">
+                  Mock response — no live LLM was called. Configure provider API keys on the server for real execution.
+                </div>
+              )}
+              {!mocked && succeeded && (
+                <div className="mb-2.5 rounded-md border border-border bg-bg-subtle px-3 py-2 text-small text-text-secondary" role="status">
+                  Demo mode: wallet is used for identity only. On-chain fee settlement is not enforced yet.
+                </div>
+              )}
               <pre className={`overflow-x-auto whitespace-pre-wrap rounded-lg border p-4 font-mono text-small ${succeeded ? "border-border bg-bg-subtle text-text-primary" : "border-danger/40 bg-danger-subtle text-danger"}`}>{result}</pre>
             </section>
           )}
@@ -170,9 +198,15 @@ export default function SkillDetailPage({ params }: { params: { slug: string } }
         <div className="w-full lg:w-[40%]">
           <div className="sticky top-20 space-y-5 rounded-xl border border-border bg-bg-subtle p-6 shadow-sm">
             <div className="flex items-baseline justify-between">
-              <span className="font-mono text-tiny uppercase tracking-[0.16em] text-text-tertiary">Execution fee</span>
-              <span className="font-mono text-h2 text-text-primary">500 <span className="text-body text-text-tertiary">$SKRN</span></span>
+              <span className="font-mono text-tiny uppercase tracking-[0.16em] text-text-tertiary">Listed fee</span>
+              <span className="font-mono text-h2 text-text-primary">
+                {Number(skill.fee).toLocaleString(undefined, { maximumFractionDigits: 2 })}{" "}
+                <span className="text-body text-text-tertiary">$SKRN</span>
+              </span>
             </div>
+            <p className="text-mono-sm text-text-tertiary">
+              Fee is recorded for protocol accounting. Chain payment is not charged yet.
+            </p>
 
             <div>
               <label htmlFor="skill-input" className="mb-1.5 block text-small font-medium text-text-secondary">Input</label>
@@ -221,19 +255,22 @@ export default function SkillDetailPage({ params }: { params: { slug: string } }
             )}
 
             <div className="border-t border-border pt-4">
-              <p id="blink-label" className="mb-2 font-mono text-tiny uppercase tracking-[0.14em] text-text-tertiary">Share as Blink</p>
+              <p id="share-label" className="mb-2 font-mono text-tiny uppercase tracking-[0.14em] text-text-tertiary">Share skill</p>
               <div className="flex gap-2">
                 <input
                   type="text"
                   readOnly
-                  aria-labelledby="blink-label"
-                  value={blinkUrl}
+                  aria-labelledby="share-label"
+                  value={shareUrl}
                   className="min-w-0 flex-1 rounded-md border border-border bg-bg-primary px-3 py-2 font-mono text-mono-sm text-text-secondary"
                 />
-                <Button variant="secondary" size="sm" onClick={() => copy(blinkUrl, "blink")} aria-label="Copy Blink URL" className="shrink-0">
-                  {copiedBlink ? <CheckIcon size={15} className="text-success" /> : <CopyIcon size={15} />}
+                <Button variant="secondary" size="sm" onClick={() => copy(shareUrl, "share")} aria-label="Copy skill URL" className="shrink-0">
+                  {copiedShare ? <CheckIcon size={15} className="text-success" /> : <CopyIcon size={15} />}
                 </Button>
               </div>
+              <p className="mt-2 text-mono-sm text-text-tertiary">
+                Solana Blinks / Actions for this skill are planned; share the web URL for now.
+              </p>
             </div>
           </div>
         </div>

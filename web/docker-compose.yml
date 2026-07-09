@@ -1,6 +1,23 @@
 version: "3.8"
 
 services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: solkernal
+    ports:
+      - "5432:5432"
+    volumes:
+      - solkernal_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d solkernal"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   web:
     build:
       context: .
@@ -10,11 +27,18 @@ services:
     env_file:
       - .env.local
     environment:
-      - NODE_ENV=production
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/solkernal
+    depends_on:
+      db:
+        condition: service_healthy
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 10s
+      start_period: 40s
+
+volumes:
+  solkernal_pg:

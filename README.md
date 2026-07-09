@@ -8,8 +8,8 @@
 [![Twitter](https://img.shields.io/badge/@SolKernal__-Follow-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://x.com/SolKernal_)
 [![License](https://img.shields.io/badge/License-MIT-A78BFA?style=for-the-badge)](LICENSE)
 
-> **Deploy, execute, and compose autonomous AI skills on-chain.**  
-> A permissionless marketplace where developers publish prompt bundles, users pay per execution, and stakers earn real yield.
+> **Publish and execute AI skills on Solana-oriented infrastructure.**  
+> Web marketplace and multi-provider LLM routing are live. On-chain settlement, Blinks, and staking vaults are next.
 
 **`$SKRN`**: `9LnqE9nevGsDHqs7bhJSyMzXwxdQJ2x4ypJNreEZpump`
 
@@ -19,15 +19,30 @@
 
 ---
 
+## Current status
+
+| Area | Status |
+|------|--------|
+| Web marketplace (list / detail / submit) | **Live** |
+| Multi-provider LLM execution | **Live** (Cloudflare, Gemini, Grok, Groq; mock if keys missing) |
+| Wallet connect (Phantom) | **Live** (identity only) |
+| On-chain fee payment on execute | **Not live** |
+| Solana Blinks / Actions | **Not live** |
+| Staking vault + rewards | **Not live** (page shows coming soon) |
+| Anchor programs / on-chain registry | **Not in this repo yet** |
+
+See [`AUDIT_REPORT.md`](./AUDIT_REPORT.md) for the full production-readiness audit.
+
+---
+
 ## 🎯 What is SolKernal?
 
-SolKernal is a **decentralized AI execution layer** built on Solana that makes AI skills:
+SolKernal is building a **decentralized AI skill marketplace** on Solana:
 
-- **Permissionless** — Anyone can publish. No approval needed.
-- **Executable Anywhere** — Every skill becomes a Solana Blink (run from Twitter, Telegram, or any URL)
-- **Verifiable** — Every execution writes an on-chain receipt with provenance
-- **Composable** — Skills can call other skills as sub-routines
-- **Revenue-Generating** — Builders earn 30% per execution, stakers earn 50%, treasury retains 20%
+- **Permissionless publishing** — Anyone can submit a skill to the registry (web app today)
+- **Multi-provider execution** — Skills route to configured LLM providers
+- **Fee design** — Target split: 30% builder / 50% stakers / 20% protocol (enforced when settlement ships)
+- **Solana-native direction** — Wallet identity now; Blinks, receipts, and vaults next
 
 ### Why Solana?
 
@@ -55,14 +70,14 @@ SolKernal is a **decentralized AI execution layer** built on Solana that makes A
 ```bash
 # Clone the repository
 git clone https://github.com/SolKernalXYZ/web.git
-cd kernal/web
+cd web
 
 # Install dependencies
 npm install
 
-# Set up environment variables
+# Set up environment variables (PostgreSQL required)
 cp .env.example .env.local
-# Edit .env.local with your configuration
+# Edit .env.local — set DATABASE_URL and optional LLM keys
 
 # Initialize database
 npx prisma migrate dev
@@ -75,6 +90,8 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+**Requirements:** Node.js 18+, a **PostgreSQL** database (`DATABASE_URL`), optional LLM API keys for live execution.
 
 ---
 
@@ -138,7 +155,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
-| **Database** | SQLite (dev) / PostgreSQL (prod) | Relational database for skill catalog, executions, users |
+| **Database** | PostgreSQL | Relational database for skill catalog, executions, stats |
 | **ORM** | Prisma 5 | Type-safe database client with migrations |
 
 ### AI & LLM
@@ -200,42 +217,26 @@ Visit the [marketplace](https://solkernal.xyz/skills) to discover AI skills acro
 - 📊 Analytics (wallet profiling, transaction forensics)
 - 🛠️ Developer Tools (code generation, smart contract auditing)
 
-### 2️⃣ Execute a Skill
+### 2️⃣ Execute a Skill (web app)
 
-#### Via Web App
-1. Click any skill card
-2. Enter required inputs (e.g., wallet address, token symbol)
-3. Connect your Solana wallet
-4. Confirm execution transaction (pays skill fee in USDC/SOL)
-5. View results and on-chain receipt
+1. Open any skill card
+2. Enter inputs
+3. Connect Phantom wallet (identity)
+4. Execute — LLM runs server-side (or labeled mock if keys missing)
+5. View result and app-level receipt
 
-#### Via Solana Blink (Twitter/Telegram)
-1. Copy skill's Blink URL from skill detail page
-2. Paste into Twitter/Telegram
-3. Click the embedded action button
-4. Sign transaction in your wallet
-5. Results appear in-app
+> On-chain fee payment and Blinks are **not** enforced yet.
 
 ### 3️⃣ Submit Your Own Skill
 
 1. Go to [Submit Skill](https://solkernal.xyz/submit)
-2. Fill in metadata:
-   - **Name** & **Description**
-   - **Category** (DeFi, NFT, Analytics, Dev Tools)
-   - **Prompt Template** (use `{{input}}` placeholders)
-   - **LLM Provider** (Cloudflare, Groq, Google)
-   - **Price** (in USDC)
-3. Submit (free on devnet, small fee on mainnet)
-4. Your skill goes live instantly with a generated Blink URL
+2. Fill in name, description, category, system prompt, provider (Cloudflare / Google / Grok), model, fee in $SKRN
+3. Connect wallet and submit
+4. Skill appears in the marketplace registry
 
 ### 4️⃣ Stake & Earn
 
-1. Visit [Staking Dashboard](https://solkernal.xyz/stake)
-2. Connect wallet with $SKRN tokens
-3. Choose stake amount
-4. Confirm transaction
-5. Earn 50% of ALL execution fees (paid in USDC)
-6. Claim rewards anytime (no lock-up period)
+Staking is **coming soon**. The `/stake` page explains the design; no off-chain stake mutations are accepted.
 
 ---
 
@@ -244,8 +245,8 @@ Visit the [marketplace](https://solkernal.xyz/skills) to discover AI skills acro
 Create a `.env.local` file in the `web/` directory:
 
 ```bash
-# Database
-DATABASE_URL="file:./dev.db"  # Use PostgreSQL URL for production
+# Database (PostgreSQL required)
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DATABASE?sslmode=require"
 
 # Site Configuration
 NEXT_PUBLIC_SITE_URL="http://localhost:3000"
@@ -253,17 +254,15 @@ NEXT_PUBLIC_SITE_URL="http://localhost:3000"
 # Solana Network
 NEXT_PUBLIC_SOLANA_RPC_URL="https://api.devnet.solana.com"
 NEXT_PUBLIC_SOLANA_NETWORK="devnet"
-
-# Token Addresses (set after deployment)
 NEXT_PUBLIC_SKRN_MINT_ADDRESS="9LnqE9nevGsDHqs7bhJSyMzXwxdQJ2x4ypJNreEZpump"
 
-# LLM Providers (optional for development)
+# LLM Providers (optional — mock execution if missing)
 CLOUDFLARE_API_TOKEN=""
 CLOUDFLARE_ACCOUNT_ID=""
 GROQ_API_KEY=""
 GOOGLE_API_KEY=""
-OPENAI_API_KEY=""
 XAI_API_KEY=""
+TAVILY_API_KEY=""
 ```
 
 ---
@@ -304,43 +303,48 @@ docker run -p 3000:3000 solkernal:latest
 
 ## 🧩 Key Features
 
-### ✅ Implemented (v1.0)
+### ✅ Implemented (v1 web foundation)
 
 - ✅ Skill marketplace with search, filter, sort
 - ✅ Skill detail pages with execution history
-- ✅ Real LLM execution (Cloudflare Workers AI, Groq, Google Gemini)
-- ✅ Mock fallback for zero-cost development
-- ✅ $SKRN token launched on pump.fun
-- ✅ Phantom wallet integration
-- ✅ Skill submission form
-- ✅ Staking dashboard (UI + mock logic)
-- ✅ Protocol statistics tracking
-- ✅ Responsive design (mobile, tablet, desktop)
-- ✅ Accessibility (WCAG 2.1 Level AA)
-- ✅ SEO optimized with Open Graph metadata
-- ✅ Docker deployment
-- ✅ Vercel-ready
+- ✅ Multi-provider LLM (Cloudflare, Groq, Google Gemini, Grok)
+- ✅ Mock fallback when provider keys are missing
+- ✅ $SKRN mint listed (pump.fun)
+- ✅ Phantom wallet connect (identity)
+- ✅ Skill submission form (validated API)
+- ✅ Docs, health check (`/api/health`), Vercel + Docker packaging
+- ✅ Responsive UI, basic SEO (metadata, sitemap, OG image)
 
-### 🚧 In Progress (v2.0)
+### 🚧 In Progress (protocol)
 
 - 🚧 Solana smart contracts (Anchor programs)
-- 🚧 $SKRN Token-2022 program deployment
-- 🚧 Real USDC payment integration
-- 🚧 Solana Blinks/Actions generation
-- 🚧 On-chain execution receipts (PDA accounts)
-- 🚧 Skill chaining (composable pipelines)
-- 🚧 Builder analytics dashboard
-- 🚧 Telegram bot integration
+- 🚧 Real $SKRN fee settlement on execute
+- 🚧 Solana Blinks / Actions
+- 🚧 On-chain execution receipts
+- 🚧 Live staking vault + fee distribution
+- 🚧 Signed wallet intents for submit / execute
+- 🚧 Builder analytics
 
-### 🔮 Roadmap (v3.0+)
+### 🔮 Later
 
-- Additional LLM providers (OpenAI, Anthropic, Llama, local models)
-- Skill versioning and upgrades
-- Skill forking and remixing
-- Reputation system for builders
-- Governance (on-chain voting with $SKRN)
-- Mobile app (React Native)
-- Enterprise API with SLA guarantees
+- More LLM providers / local models
+- Skill versioning, fork, remix
+- Reputation and governance
+- Mobile clients
+- Higher-SLA API tier
+
+---
+
+## 🚢 Deployment (Vercel)
+
+1. Link the `web/` project in Vercel (framework: Next.js).
+2. Set production env vars (at minimum `DATABASE_URL`, `NEXT_PUBLIC_SITE_URL`).
+3. Add LLM keys for live execution (`XAI_API_KEY`, `GOOGLE_API_KEY`, etc.).
+4. Build command: `prisma generate && npm run build` (see `vercel.json`).
+5. Deploy: `npx vercel --prod` from `web/`, or push to the connected Git branch.
+6. Smoke-test: `GET /api/health`, `/skills`, `/docs`.
+
+Never commit real secrets. Use Vercel Environment Variables or a secrets manager.
 
 ---
 

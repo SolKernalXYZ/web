@@ -14,26 +14,26 @@ import {
 } from '@/components/icons';
 
 const navCards = [
-  { href: '/skills', title: 'Skills', ext: 'db', Icon: SkillsIcon, desc: 'Browse the on-chain skill registry. Filter by category, provider, and execution cost.' },
-  { href: '/run', title: 'Run', ext: 'exe', Icon: RunIcon, desc: 'Execute any registered skill on Solana. Get results in seconds.' },
-  { href: '/stake', title: 'Stake', ext: 'db', Icon: StakeIcon, desc: 'Stake $SKRN tokens. Earn 50% of all protocol fees paid in $SKRN.' },
-  { href: '/submit', title: 'Submit', ext: 'md', Icon: SubmitIcon, desc: 'Publish your AI skill to the registry. Set pricing. Earn per execution.' },
+  { href: '/skills', title: 'Skills', ext: 'db', Icon: SkillsIcon, desc: 'Browse the skill marketplace. Filter by category, provider, and listed fee.' },
+  { href: '/run', title: 'Run', ext: 'exe', Icon: RunIcon, desc: 'Execute any registered skill via the web app. Get results in seconds.' },
+  { href: '/stake', title: 'Stake', ext: 'db', Icon: StakeIcon, desc: 'Staking vaults are next. Planned: earn a share of protocol execution fees in $SKRN.' },
+  { href: '/submit', title: 'Submit', ext: 'md', Icon: SubmitIcon, desc: 'Publish your AI skill to the registry. Set pricing. Prepare to earn per execution.' },
 ];
 
 const features = [
-  { Icon: RegistryIcon, title: 'On-chain Registry', desc: 'Every skill is a Solana account. Immutable metadata, versioned prompts, transparent pricing stored on-chain.' },
-  { Icon: BlinkIcon, title: 'Blink Execution', desc: 'Execute any skill directly from X/Twitter via Solana Blinks. No app required. Share a link, run AI.' },
-  { Icon: YieldIcon, title: 'Real Yield', desc: '50% of all execution fees distributed to $SKRN stakers in $SKRN. No inflation. No emissions. Pure revenue share.' },
-  { Icon: ReceiptIcon, title: 'Execution Receipts', desc: 'Every execution produces an on-chain receipt. Proof of compute, cost, provider, and output hash.' },
-  { Icon: RouterIcon, title: 'Multi-provider LLM', desc: 'Skills route to the best LLM model. Llama, Qwen, DeepSeek via Cloudflare Workers AI. Failover built in.' },
-  { Icon: ComposeIcon, title: 'Composable Skills', desc: 'Chain skills together. Output of one feeds into the next. Build complex AI workflows from primitives.' },
+  { Icon: RegistryIcon, title: 'Skill registry', desc: 'Versioned prompt bundles with metadata, pricing, and provider routing. On-chain accounts are the next step.' },
+  { Icon: BlinkIcon, title: 'Shareable skills', desc: 'Every skill has a public web URL today. Solana Blinks / Actions for X and Telegram are on the roadmap.' },
+  { Icon: YieldIcon, title: 'Fee design', desc: 'Target split: 30% builder, 50% stakers, 20% protocol — enforced once on-chain settlement ships.' },
+  { Icon: ReceiptIcon, title: 'Execution receipts', desc: 'Every run stores an app-level receipt (input/output, fee listed, status). On-chain hashes come next.' },
+  { Icon: RouterIcon, title: 'Multi-provider LLM', desc: 'Route to Cloudflare Workers AI, Google Gemini, Grok (xAI), or Groq. Mock fallback when keys are missing.' },
+  { Icon: ComposeIcon, title: 'Composable design', desc: 'Skills are designed as primitives. Pipelines and skill-to-skill chaining are planned for later releases.' },
 ];
 
 const steps = [
-  { n: '01', title: 'Developer publishes skill', desc: 'Upload prompt template, set pricing in $SKRN, choose LLM provider. Skill registered on Solana.' },
-  { n: '02', title: 'User triggers execution', desc: 'Via app, API, or Solana Blink on X/Twitter. Payment held in escrow.' },
-  { n: '03', title: 'Orchestrator routes to LLM', desc: 'SolKernal picks the optimal provider, injects user input, executes the prompt.' },
-  { n: '04', title: 'Result delivered, fees split', desc: 'User gets output. 50% fee to developer, 50% to staker pool. Receipt minted on-chain.' },
+  { n: '01', title: 'Developer publishes skill', desc: 'Define prompt, model provider, and listed fee in $SKRN. Skill is stored in the app registry.' },
+  { n: '02', title: 'User runs the skill', desc: 'Connect a Solana wallet for identity, provide input, and execute from the web app.' },
+  { n: '03', title: 'Orchestrator calls the LLM', desc: 'SolKernal routes to the configured provider, injects input, and returns the model output.' },
+  { n: '04', title: 'Result + receipt', desc: 'User gets output. Fee split (30 / 50 / 20) is designed for when on-chain settlement is live.' },
 ];
 
 const tiers = [
@@ -92,8 +92,8 @@ export default async function Home() {
               <span className="text-brand-gradient">autonomous AI skills</span>
             </h1>
             <p className="mt-6 max-w-prose animate-fade-up text-body-lg text-text-secondary [animation-delay:120ms]">
-              Deploy, execute, and compose AI skills on-chain. A permissionless marketplace where developers
-              publish prompt bundles, users pay per execution, and stakers earn real yield from every transaction.
+              Publish and run AI skills on Solana-oriented infrastructure. The web marketplace and multi-provider
+              LLM execution are live; on-chain fee settlement, Blinks, and staking vaults are next.
             </p>
             <div className="mt-8 flex animate-fade-up flex-wrap gap-3 [animation-delay:180ms]">
               <Link href="/skills">
@@ -107,9 +107,9 @@ export default async function Home() {
             </div>
             <dl className="mt-12 grid animate-fade-up grid-cols-3 gap-px overflow-hidden rounded-lg border border-border bg-border [animation-delay:240ms]">
               {[
-                { v: String(stats.skillCount), l: 'Skills Live' },
-                { v: '500', l: '$SKRN / run' },
-                { v: '50%', l: 'To Stakers' },
+                { v: String(stats.skillCount), l: 'Skills listed' },
+                { v: 'Demo', l: 'Web execution' },
+                { v: '30/50/20', l: 'Fee design' },
               ].map((s) => (
                 <div key={s.l} className="bg-bg-primary px-4 py-4">
                   <dd className="font-mono text-h2 tabular-nums text-text-primary">{s.v}</dd>
@@ -173,10 +173,16 @@ export default async function Home() {
                     accrues from real execution fees.
                   </p>
                   <div className="mt-5 flex flex-wrap items-center gap-3">
-                    <a href="https://pump.fun" target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={`https://pump.fun/coin/${process.env.NEXT_PUBLIC_SKRN_MINT_ADDRESS || '9LnqE9nevGsDHqs7bhJSyMzXwxdQJ2x4ypJNreEZpump'}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <Button variant="secondary" trailingIcon={<ArrowRight size={16} />}>Buy on Pump.fun</Button>
                     </a>
-                    <span className="font-mono text-mono-sm text-text-tertiary">Mint: TBD — launching soon</span>
+                    <span className="max-w-full break-all font-mono text-mono-sm text-text-tertiary">
+                      Mint: {process.env.NEXT_PUBLIC_SKRN_MINT_ADDRESS || '9LnqE9nevGsDHqs7bhJSyMzXwxdQJ2x4ypJNreEZpump'}
+                    </span>
                   </div>
                 </div>
                 <ul className="space-y-2.5">
@@ -212,8 +218,8 @@ export default async function Home() {
             <div className="h-full rounded-xl border border-accent/30 bg-accent-subtle/40 p-6 sm:p-8">
               <Badgeish tone="accent">Our Solution</Badgeish>
               <div className="mt-4 space-y-3 text-body text-text-secondary">
-                <p>SolKernal is an on-chain operating system for AI skills. A skill is a versioned prompt bundle registered as a Solana account — with defined inputs, pricing, and LLM routing.</p>
-                <p>Anyone can publish. Anyone can execute. Anyone can stake and earn. Skills are callable from any interface, including directly from X/Twitter via Solana Blinks. One protocol, shared liquidity, composable by default.</p>
+                <p>SolKernal is building an operating system for AI skills on Solana. A skill is a versioned prompt bundle with defined inputs, pricing, and LLM routing — registered in the app today, moving on-chain next.</p>
+                <p>Anyone can publish and execute from the web app. Staking yield and Blinks are designed into the protocol and will ship as on-chain programs land. One marketplace, multi-provider routing, transparent fee design.</p>
               </div>
             </div>
           </Reveal>
@@ -273,9 +279,8 @@ export default async function Home() {
               <div className="relative">
                 <SectionHeading eyebrow="Real Yield" title="Stake & earn" />
                 <p className="mt-3 max-w-prose text-body text-text-secondary">
-                  Stake $SKRN into the protocol vault. Every time a skill is executed anywhere on the network,
-                  50% of the fee is collected into the staker pool and distributed pro-rata in $SKRN. No lockups —
-                  withdraw anytime.
+                  Planned design: stake $SKRN into a protocol vault. When on-chain fee settlement is live, a share of
+                  each execution fee flows to stakers pro-rata. Staking UI is intentionally disabled until programs ship.
                 </p>
                 <div className="mt-6 grid gap-4 sm:grid-cols-3">
                   <StatBox value={`${compact(stats.totalStaked)}`} label="$SKRN Staked" icon={<StakeIcon size={16} />} />
@@ -302,8 +307,8 @@ export default async function Home() {
               </div>
               <h2 className="mt-6 text-h1 text-text-inverse">Start building on SolKernal</h2>
               <p className="mx-auto mt-3 max-w-prose text-body text-text-inverse/70">
-                Publish your first AI skill in under 5 minutes. Define a prompt, set a price, deploy to Solana.
-                Earn every time someone executes it.
+                Publish your first AI skill in minutes. Define a prompt, choose a model, set a listed fee, and go live
+                on the marketplace. On-chain earnings activate with settlement.
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Link href="/submit">

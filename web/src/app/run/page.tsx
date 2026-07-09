@@ -11,19 +11,19 @@ export const metadata: Metadata = {
 };
 
 const steps = [
-  { Icon: SearchIcon, title: 'Find a skill', body: <>Browse the <Link href="/skills" className="text-accent link-underline">marketplace</Link> or open a Blink URL shared on X.</> },
-  { Icon: WalletIcon, title: 'Connect wallet', body: <>Connect your Solana wallet — Phantom, Backpack, or Solflare.</> },
-  { Icon: BoltIcon, title: 'Provide input', body: <>Fill in the skill&apos;s input fields and review the execution fee and split.</> },
-  { Icon: CheckIcon, title: 'Approve & receive', body: <>Approve the transaction — output is delivered in under 5 seconds with an on-chain receipt.</> },
+  { Icon: SearchIcon, title: 'Find a skill', body: <>Browse the <Link href="/skills" className="text-accent link-underline">marketplace</Link> and open a skill detail page.</> },
+  { Icon: WalletIcon, title: 'Connect wallet', body: <>Connect Phantom (more wallets later). Used for identity; chain payment not enforced yet.</> },
+  { Icon: BoltIcon, title: 'Provide input', body: <>Fill in the skill&apos;s input fields and review the listed fee and planned split.</> },
+  { Icon: CheckIcon, title: 'Execute & receive', body: <>Run the skill. Output returns from the configured LLM (or a labeled mock if keys are missing).</> },
 ];
 
 const specs = [
-  ['Payment', '$SKRN'],
-  ['Latency', '< 5s end-to-end'],
-  ['Providers', 'Cloudflare Workers AI'],
-  ['Receipt', 'On-chain PDA'],
-  ['Settlement', '~400ms finality'],
-  ['Tx cost', '~$0.00025'],
+  ['Payment (live)', 'Not enforced yet (demo)'],
+  ['Listed fee token', '$SKRN'],
+  ['Providers', 'Cloudflare, Gemini, Grok, Groq'],
+  ['Receipt (today)', 'App database record'],
+  ['Receipt (next)', 'On-chain PDA / hash'],
+  ['Wallet', 'Phantom adapter'],
 ];
 
 export default function RunPage() {
@@ -35,8 +35,8 @@ export default function RunPage() {
           <p className="font-mono text-tiny uppercase tracking-[0.16em] text-accent">Run.exe</p>
           <h1 className="mt-2 text-h1">Execute any skill in seconds</h1>
           <p className="mx-auto mt-3 max-w-prose text-body text-text-secondary">
-            Find a skill, connect your wallet, and pay the execution fee. SolKernal routes your input to the optimal
-            LLM and returns a verifiable result.
+            Find a skill, connect your wallet, and run it. SolKernal routes your input to the configured LLM and
+            returns a result. On-chain fee settlement is the next protocol milestone.
           </p>
         </div>
 

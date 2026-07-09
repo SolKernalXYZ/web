@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="SolKernal">
+  <rect width="1200" height="630" fill="#ffffff"/>
+  <rect x="0" y="0" width="1200" height="8" fill="#7C3AED"/>
+  <rect x="80" y="160" width="56" height="56" rx="12" fill="none" stroke="#7C3AED" stroke-width="3"/>
+  <circle cx="108" cy="188" r="8" fill="#7C3AED"/>
+  <text x="160" y="200" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="42" font-weight="700" fill="#0E0E10" letter-spacing="0.08em">SOLKERNAL</text>
+  <text x="80" y="290" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="48" font-weight="700" fill="#0E0E10">AI Skill OS for Solana</text>
+  <text x="80" y="350" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="28" fill="#52525B">Publish · execute · compose skills</text>
+  <text x="80" y="520" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="22" fill="#71717A">solkernal.xyz</text>
+</svg>

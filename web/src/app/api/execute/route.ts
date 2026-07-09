@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { executeLLM } from "@/lib/llm";
 import { rateLimit } from "@/lib/rateLimit";
+import { isValidSolanaAddress } from "@/lib/skillsPublic";
 
-const MAX_INPUT_LENGTH = 8_000; // characters
-const RATE_LIMIT = 10; // executions
-const RATE_WINDOW_MS = 60_000; // per minute, per wallet
+const MAX_INPUT_LENGTH = 8_000;
+const RATE_LIMIT = 10;
+const RATE_WINDOW_MS = 60_000;
 
 export async function POST(request: Request) {
   try {
@@ -28,11 +29,18 @@ export async function POST(request: Request) {
     }
 
     const trimmedInput = input.trim();
-    if (!slug || !trimmedInput || !walletAddress) {
+    const trimmedWallet = walletAddress.trim();
+    const trimmedSlug = slug.trim();
+
+    if (!trimmedSlug || !trimmedInput || !trimmedWallet) {
       return NextResponse.json(
         { error: "slug, input, and walletAddress must not be empty" },
         { status: 400 },
       );
+    }
+
+    if (!isValidSolanaAddress(trimmedWallet)) {
+      return NextResponse.json({ error: "Invalid walletAddress" }, { status: 400 });
     }
 
     if (trimmedInput.length > MAX_INPUT_LENGTH) {
@@ -42,8 +50,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Best-effort per-wallet rate limiting to curb runaway loops / abuse.
-    const limit = rateLimit(`execute:${walletAddress}`, RATE_LIMIT, RATE_WINDOW_MS);
+    const limit = rateLimit(`execute:${trimmedWallet}`, RATE_LIMIT, RATE_WINDOW_MS);
     if (!limit.allowed) {
       const retryAfter = Math.max(1, Math.ceil((limit.resetAt - Date.now()) / 1000));
       return NextResponse.json(
@@ -52,10 +59,12 @@ export async function POST(request: Request) {
       );
     }
 
-    const skill = await prisma.skill.findUnique({ where: { slug } });
+    const skill = await prisma.skill.findUnique({ where: { slug: trimmedSlug } });
     if (!skill) return NextResponse.json({ error: "Skill not found" }, { status: 404 });
     if (!skill.active) return NextResponse.json({ error: "Skill is not active" }, { status: 409 });
 
+    // NOTE: On-chain fee settlement is not enforced yet. Execution is free at the
+    // application layer; feePaid is recorded for accounting/preview only.
     const llmResult = await executeLLM({
       provider: skill.provider,
       model: skill.model,
@@ -66,30 +75,32 @@ export async function POST(request: Request) {
     const execution = await prisma.execution.create({
       data: {
         skillId: skill.id,
-        walletAddress,
+        walletAddress: trimmedWallet,
         input: trimmedInput,
         output: llmResult.output,
         feePaid: skill.fee,
-        status: "success",
+        status: llmResult.mocked ? "mocked" : "success",
       },
     });
 
-    // Increment counters (best-effort; not in a transaction since they are independent stats).
     await prisma.skill.update({ where: { id: skill.id }, data: { runs: { increment: 1 } } });
-    await prisma.protocolStats.update({
+    await prisma.protocolStats.upsert({
       where: { id: "global" },
-      data: { totalExecutions: { increment: 1 } },
+      create: { id: "global", totalExecutions: 1 },
+      update: { totalExecutions: { increment: 1 } },
     });
 
     return NextResponse.json({
       executionId: execution.id,
       output: llmResult.output,
       feePaid: skill.fee,
-      status: "success",
+      status: execution.status,
       mocked: llmResult.mocked,
+      paymentEnforced: false,
     });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : "Execution failed";
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("[api/execute POST]", message);
+    return NextResponse.json({ error: "Execution failed" }, { status: 500 });
   }
 }
