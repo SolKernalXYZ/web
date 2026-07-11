@@ -18,7 +18,13 @@ type Skill = {
   provider: string;
   description: string;
   builderWallet: string;
+  tags?: string;
 };
+
+function isLiveData(tags?: string) {
+  if (!tags) return false;
+  return tags.split(",").map((t) => t.trim().toLowerCase()).includes("tools");
+}
 
 const CATEGORIES = ['DeFi', 'Trading', 'Writing', 'Code', 'Research', 'Utility'];
 const PROVIDERS = ['Cloudflare', 'Groq', 'Google', 'Grok'];
@@ -74,10 +80,12 @@ export default function SkillsPage() {
       if (feeMax && s.fee > parseFloat(feeMax)) return false;
       return true;
     });
-    if (sort === 'popular') result.sort((a, b) => b.runs - a.runs);
-    else if (sort === 'fee-low') result.sort((a, b) => a.fee - b.fee);
-    else if (sort === 'fee-high') result.sort((a, b) => b.fee - a.fee);
-    else if (sort === 'newest') result.sort((a, b) => a.slug.localeCompare(b.slug));
+    // Live-data skills float first within the chosen sort (wedge focus).
+    const liveFirst = (a: Skill, b: Skill) => Number(isLiveData(b.tags)) - Number(isLiveData(a.tags));
+    if (sort === 'popular') result.sort((a, b) => liveFirst(a, b) || b.runs - a.runs);
+    else if (sort === 'fee-low') result.sort((a, b) => liveFirst(a, b) || a.fee - b.fee);
+    else if (sort === 'fee-high') result.sort((a, b) => liveFirst(a, b) || b.fee - a.fee);
+    else if (sort === 'newest') result.sort((a, b) => liveFirst(a, b) || a.slug.localeCompare(b.slug));
     return result;
   }, [skills, search, selectedCategories, selectedProviders, feeMin, feeMax, sort]);
 
@@ -167,8 +175,8 @@ export default function SkillsPage() {
         <p className="font-mono text-tiny uppercase tracking-[0.16em] text-accent">Registry</p>
         <h1 className="mt-2 text-h1">Skill marketplace</h1>
         <p className="mt-2 max-w-prose text-body text-text-secondary">
-          Browse the on-chain registry of AI skills. Filter by category, provider, and execution cost — then run any
-          skill in seconds.
+          Solana decision tools first. Prefer <span className="text-success">Live data</span> skills that call chain
+          and market APIs — free trial, no wallet required.
         </p>
       </div>
 
@@ -261,9 +269,12 @@ export default function SkillsPage() {
                   className="group rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary"
                 >
                   <article className="lift flex h-full flex-col rounded-lg border border-border bg-bg-subtle p-5 hover:border-border-focused hover:shadow-md">
-                    <div className="flex items-center justify-between">
-                      <Badge tone="accent" mono>{skill.category}</Badge>
-                      <span className="font-mono text-small font-semibold text-text-primary">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <Badge tone="accent" mono>{skill.category}</Badge>
+                        {isLiveData(skill.tags) && <Badge tone="success" mono>Live data</Badge>}
+                      </div>
+                      <span className="shrink-0 font-mono text-small font-semibold text-text-primary">
                         {Number(skill.fee).toLocaleString(undefined, { maximumFractionDigits: 2 })} $SKRN
                       </span>
                     </div>

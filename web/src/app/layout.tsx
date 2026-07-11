@@ -25,25 +25,27 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'SolKernal — AI Skill OS for Solana',
+    default: 'SolKernal — Don’t ape blind. Run the desk.',
     template: '%s | SolKernal',
   },
-  description: 'Publish and execute AI skills on Solana-oriented infrastructure. Marketplace, multi-provider LLM routing, and docs — with on-chain settlement on the roadmap.',
-  keywords: ['Solana', 'AI', 'Skills', 'Blockchain', 'Marketplace', 'LLM', '$SKRN'],
+  description:
+    'Solana decision tools with live chain data. Paste a mint, get risk and signal in seconds. Free trial — no wallet required.',
+  keywords: ['Solana', 'AI', 'rug scanner', 'token risk', 'Skills', 'Marketplace', 'LLM', '$SKRN'],
   authors: [{ name: 'SolKernal' }],
   openGraph: {
     type: 'website',
     siteName: 'SolKernal',
-    title: 'SolKernal — AI Skill OS for Solana',
-    description: 'Publish and execute AI skills. Multi-provider LLM marketplace with Solana wallet identity. On-chain settlement next.',
+    title: 'SolKernal — Don’t ape blind. Run the desk.',
+    description:
+      'Paste any SPL mint for a live-data risk brief. Free guest trial. Public run receipts you can share.',
     url: siteUrl,
     locale: 'en_US',
     images: [{ url: '/og.svg', width: 1200, height: 630, alt: 'SolKernal' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SolKernal — AI Skill OS for Solana',
-    description: 'Publish and execute AI skills on Solana-oriented infrastructure.',
+    title: 'SolKernal — Don’t ape blind. Run the desk.',
+    description: 'Solana mint risk scans and decision tools. Free trial, no wallet required.',
     images: ['/og.svg'],
   },
   robots: { index: true, follow: true },

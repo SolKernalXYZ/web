@@ -24,6 +24,28 @@ const PUBLIC_SKILL_SELECT = {
 
 export { PUBLIC_SKILL_SELECT };
 
+/** Skills tagged with "tools" call live Solana / market / web tools. */
+export function isLiveDataSkill(tags: string | null | undefined): boolean {
+  if (!tags) return false;
+  return tags
+    .split(",")
+    .map((t) => t.trim().toLowerCase())
+    .includes("tools");
+}
+
+/** Guest identity marker stored on Execution.walletAddress for free trials. */
+export const GUEST_WALLET_PREFIX = "guest:";
+
+export function isGuestWallet(walletAddress: string): boolean {
+  return walletAddress.startsWith(GUEST_WALLET_PREFIX) || walletAddress === "guest";
+}
+
+export function maskWallet(walletAddress: string): string {
+  if (isGuestWallet(walletAddress)) return "guest";
+  if (walletAddress.length < 8) return "••••";
+  return `${walletAddress.slice(0, 4)}…${walletAddress.slice(-4)}`;
+}
+
 /** Solana base58 address: 32–44 chars, no 0/O/I/l. */
 export function isValidSolanaAddress(address: string): boolean {
   return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address);

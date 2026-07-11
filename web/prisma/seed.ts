@@ -15,7 +15,7 @@ const skills = [
     name: "Token Sentiment Analyst",
     category: "DeFi",
     fee: 0.5,
-    runs: 2341,
+    runs: 0,
     provider: "Cloudflare",
     model: "@cf/meta/llama-4-scout-17b-16e-instruct",
     description:
@@ -31,7 +31,7 @@ const skills = [
     name: "Solana Contract Auditor",
     category: "Code",
     fee: 1.0,
-    runs: 891,
+    runs: 0,
     provider: "Cloudflare",
     model: "@cf/qwen/qwen2.5-coder-32b-instruct",
     description:
@@ -47,7 +47,7 @@ const skills = [
     name: "Tweet Writer Pro",
     category: "Writing",
     fee: 0.25,
-    runs: 4102,
+    runs: 0,
     provider: "Cloudflare",
     model: "@cf/meta/llama-3.1-8b-instruct-fast",
     description:
@@ -63,7 +63,7 @@ const skills = [
     name: "On-chain Intel Report",
     category: "Research",
     fee: 0.75,
-    runs: 552,
+    runs: 0,
     provider: "Cloudflare",
     model: "@cf/meta/llama-4-scout-17b-16e-instruct",
     description:
@@ -79,7 +79,7 @@ const skills = [
     name: "NFT Metadata Generator",
     category: "Utility",
     fee: 0.3,
-    runs: 1203,
+    runs: 0,
     provider: "Cloudflare",
     model: "@cf/meta/llama-3.1-8b-instruct-fast",
     description:
@@ -95,7 +95,7 @@ const skills = [
     name: "DeFi Yield Optimizer",
     category: "Trading",
     fee: 0.8,
-    runs: 723,
+    runs: 0,
     provider: "Cloudflare",
     model: "@cf/meta/llama-4-scout-17b-16e-instruct",
     description:
@@ -476,30 +476,49 @@ const skills = [
   },
 ];
 
+/** Commodity / off-wedge skills — soft-hide from marketplace (active: false). */
+const ARCHIVED_SLUGS = [
+  "meeting-notes-to-actions",
+  "json-structure-designer",
+  "multilingual-content-writer",
+  "advanced-data-analyzer",
+  "release-note-generator",
+  "api-doc-draft-generator",
+] as const;
+
 async function main() {
   const existing = await prisma.skill.findMany({ select: { slug: true } });
   const existingSlugs = new Set(existing.map((s) => s.slug));
 
+  // Honest protocol stats only — never seed inflated vanity numbers.
   await prisma.protocolStats.upsert({
     where: { id: "global" },
-    update: {},
+    update: {
+      totalStaked: 0,
+      totalDistributed: 0,
+      uniqueStakers: 0,
+      // Keep totalExecutions as-is if real runs already happened; zero only on create.
+    },
     create: {
       id: "global",
-      totalStaked: 342500000,
-      totalDistributed: 28420.5,
-      totalExecutions: 10812,
-      uniqueStakers: 1204,
+      totalStaked: 0,
+      totalDistributed: 0,
+      totalExecutions: 0,
+      uniqueStakers: 0,
     },
   });
 
   for (const skill of skills) {
     const exists = existingSlugs.has(skill.slug);
+    const archived = (ARCHIVED_SLUGS as readonly string[]).includes(skill.slug);
     await prisma.skill.upsert({
       where: { slug: skill.slug },
       update: {
         name: skill.name,
         category: skill.category,
         fee: skill.fee,
+        // Reset vanity seed runs so counters only grow from real executions.
+        runs: skill.runs,
         provider: skill.provider,
         model: skill.model,
         description: skill.description,
@@ -507,13 +526,22 @@ async function main() {
         outputFormat: skill.outputFormat,
         tags: skill.tags,
         builderWallet: skill.builderWallet,
+        active: !archived,
       },
-      create: skill,
+      create: {
+        ...skill,
+        active: !archived,
+      },
     });
-    console.log(`  ${exists ? "Updated" : "Created"}: ${skill.slug}`);
+    console.log(`  ${exists ? "Updated" : "Created"}: ${skill.slug}${archived ? " (archived)" : ""}`);
   }
 
-  console.log(`\nDone. ${skills.length} skills seeded.`);
+  // Archive any leftover commodity rows even if definition removed later.
+  for (const slug of ARCHIVED_SLUGS) {
+    await prisma.skill.updateMany({ where: { slug }, data: { active: false } });
+  }
+
+  console.log(`\nDone. ${skills.length} skills seeded. Archived: ${ARCHIVED_SLUGS.length}.`);
 }
 
 main()

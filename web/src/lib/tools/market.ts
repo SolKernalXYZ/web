@@ -166,7 +166,7 @@ export const marketTools: ToolDefinition[] = [
       required: ["domain"],
     },
     execute: async (args) => {
-      let domain = String(args.domain || "")
+      const domain = String(args.domain || "")
         .trim()
         .toLowerCase()
         .replace(/\.sol$/i, "");

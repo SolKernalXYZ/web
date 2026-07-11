@@ -4,7 +4,7 @@ import Button from '@/components/Button';
 import StatBox from '@/components/StatBox';
 import Reveal from '@/components/Reveal';
 import Logo from '@/components/Logo';
-import HeroVisual from '@/components/graphics/HeroVisual';
+import MintScanner from '@/components/MintScanner';
 import { GridBackdrop, GlowOrb, SectionDivider } from '@/components/graphics/Decor';
 import RoadmapSection from '@/components/RoadmapSection';
 import {
@@ -14,32 +14,32 @@ import {
 } from '@/components/icons';
 
 const navCards = [
-  { href: '/skills', title: 'Skills', ext: 'db', Icon: SkillsIcon, desc: 'Browse the skill marketplace. Filter by category, provider, and listed fee.' },
-  { href: '/run', title: 'Run', ext: 'exe', Icon: RunIcon, desc: 'Execute any registered skill via the web app. Get results in seconds.' },
+  { href: '/skills', title: 'Skills', ext: 'db', Icon: SkillsIcon, desc: 'Browse decision tools. Prefer Live data skills that pull chain & market signals.' },
+  { href: '/skills/rug-risk-scanner', title: 'Scan', ext: 'exe', Icon: RunIcon, desc: 'Paste a mint. Get a structured rug / risk brief in seconds — free trial, no wallet.' },
   { href: '/stake', title: 'Stake', ext: 'db', Icon: StakeIcon, desc: 'Staking vaults are next. Planned: earn a share of protocol execution fees in $SKRN.' },
-  { href: '/submit', title: 'Submit', ext: 'md', Icon: SubmitIcon, desc: 'Publish your AI skill to the registry. Set pricing. Prepare to earn per execution.' },
+  { href: '/submit', title: 'Submit', ext: 'md', Icon: SubmitIcon, desc: 'Publish a tool-using skill. Set pricing. Prepare to earn per execution.' },
 ];
 
 const features = [
-  { Icon: RegistryIcon, title: 'Skill registry', desc: 'Versioned prompt bundles with metadata, pricing, and provider routing. On-chain accounts are the next step.' },
-  { Icon: BlinkIcon, title: 'Shareable skills', desc: 'Every skill has a public web URL today. Solana Blinks / Actions for X and Telegram are on the roadmap.' },
-  { Icon: YieldIcon, title: 'Fee design', desc: 'Target split: 30% builder, 50% stakers, 20% protocol — enforced once on-chain settlement ships.' },
-  { Icon: ReceiptIcon, title: 'Execution receipts', desc: 'Every run stores an app-level receipt (input/output, fee listed, status). On-chain hashes come next.' },
+  { Icon: RegistryIcon, title: 'Live-data skills', desc: 'Prefer skills that call Solana + market tools — mint authorities, balances, prices — not generic chat wrappers.' },
+  { Icon: BlinkIcon, title: 'Free guest trial', desc: 'Run without a wallet (rate-limited). Connect later for identity when paid settlement ships.' },
+  { Icon: YieldIcon, title: 'Fee design', desc: 'Target split when settlement is live: builder / stakers / protocol. No fake APY today.' },
+  { Icon: ReceiptIcon, title: 'Shareable receipts', desc: 'Every run gets a public /r/ link with highlights + Post on X. On-chain hashes come next.' },
   { Icon: RouterIcon, title: 'Multi-provider LLM', desc: 'Route to Cloudflare Workers AI, Google Gemini, Grok (xAI), or Groq. Mock fallback when keys are missing.' },
-  { Icon: ComposeIcon, title: 'Composable design', desc: 'Skills are designed as primitives. Pipelines and skill-to-skill chaining are planned for later releases.' },
+  { Icon: ComposeIcon, title: 'Mint-first wedge', desc: 'Homepage scanner and rug tools first. Pipelines and full OS composition later.' },
 ];
 
 const steps = [
-  { n: '01', title: 'Developer publishes skill', desc: 'Define prompt, model provider, and listed fee in $SKRN. Skill is stored in the app registry.' },
-  { n: '02', title: 'User runs the skill', desc: 'Connect a Solana wallet for identity, provide input, and execute from the web app.' },
-  { n: '03', title: 'Orchestrator calls the LLM', desc: 'SolKernal routes to the configured provider, injects input, and returns the model output.' },
-  { n: '04', title: 'Result + receipt', desc: 'User gets output. Fee split (30 / 50 / 20) is designed for when on-chain settlement is live.' },
+  { n: '01', title: 'Paste a mint (or wallet)', desc: 'Start on the homepage scanner or any Live data skill. No wallet required for free trial.' },
+  { n: '02', title: 'Desk runs tools + LLM', desc: 'SolKernal pulls chain/market data where the skill allows, then structures a decision-ready brief.' },
+  { n: '03', title: 'Get score + full output', desc: 'Risk highlights when parseable, full markdown/JSON below. Mock vs live is always labeled.' },
+  { n: '04', title: 'Share the receipt', desc: 'Public /r/ link + Post on X. Fee settlement and on-chain proofs ship after the loop works.' },
 ];
 
 const tiers = [
-  { hold: '100K $SKRN', perk: 'Access to premium skills' },
-  { hold: '500K $SKRN', perk: 'Reduced execution fees' },
-  { hold: 'Any amount staked', perk: 'Earn 50% protocol revenue in $SKRN' },
+  { hold: 'Hold $SKRN', perk: 'Planned: free daily runs & rate limits' },
+  { hold: 'Builders', perk: 'Planned: rank boost for staked listings' },
+  { hold: 'Stakers', perk: 'Fee share only after real on-chain volume' },
 ];
 
 // Revalidate landing stats at most once per minute (ISR) so the figures stay
@@ -85,31 +85,31 @@ export default async function Home() {
           <div>
             <span className="inline-flex animate-fade-up items-center gap-2 rounded-full border border-border bg-bg-subtle px-3 py-1 text-tiny font-medium uppercase tracking-[0.14em] text-text-secondary">
               <SparkIcon size={13} className="text-accent" />
-              AI Skill OS · Solana Network
+              Solana decision tools · free trial
             </span>
             <h1 className="mt-5 animate-fade-up text-display font-bold leading-[1.02] [animation-delay:60ms]">
-              The kernel for<br />
-              <span className="text-brand-gradient">autonomous AI skills</span>
+              Don&apos;t ape blind.<br />
+              <span className="text-brand-gradient">Run the desk.</span>
             </h1>
             <p className="mt-6 max-w-prose animate-fade-up text-body-lg text-text-secondary [animation-delay:120ms]">
-              Publish and run AI skills on Solana-oriented infrastructure. The web marketplace and multi-provider
-              LLM execution are live; on-chain fee settlement, Blinks, and staking vaults are next.
+              Paste a mint or wallet — get live-data risk, authorities, and signal in seconds. Marketplace and
+              multi-provider LLM are live; on-chain fee settlement is next.
             </p>
             <div className="mt-8 flex animate-fade-up flex-wrap gap-3 [animation-delay:180ms]">
-              <Link href="/skills">
+              <Link href="/skills/rug-risk-scanner">
                 <Button variant="accent" size="lg" trailingIcon={<ArrowRight size={18} />}>
-                  Browse Skills
+                  Open rug scanner
                 </Button>
               </Link>
-              <Link href="/submit">
-                <Button variant="secondary" size="lg">Publish a Skill</Button>
+              <Link href="/skills">
+                <Button variant="secondary" size="lg">Browse skills</Button>
               </Link>
             </div>
             <dl className="mt-12 grid animate-fade-up grid-cols-3 gap-px overflow-hidden rounded-lg border border-border bg-border [animation-delay:240ms]">
               {[
                 { v: String(stats.skillCount), l: 'Skills listed' },
-                { v: 'Demo', l: 'Web execution' },
-                { v: '30/50/20', l: 'Fee design' },
+                { v: 'Free', l: 'Guest trial' },
+                { v: 'Live', l: 'Chain tools' },
               ].map((s) => (
                 <div key={s.l} className="bg-bg-primary px-4 py-4">
                   <dd className="font-mono text-h2 tabular-nums text-text-primary">{s.v}</dd>
@@ -121,15 +121,7 @@ export default async function Home() {
 
           <div className="relative animate-scale-in [animation-delay:120ms]">
             <GlowOrb className="left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2" />
-            <div className="relative rounded-2xl border border-border bg-bg-subtle/60 p-5 shadow-lg backdrop-blur-sm sm:p-8">
-              <div className="mb-4 flex items-center gap-2">
-                <span className="h-2.5 w-2.5 rounded-full bg-danger/70" />
-                <span className="h-2.5 w-2.5 rounded-full bg-warning/70" />
-                <span className="h-2.5 w-2.5 rounded-full bg-success/70" />
-                <span className="ml-2 font-mono text-mono-sm text-text-tertiary">kernel · execution pipeline</span>
-              </div>
-              <HeroVisual />
-            </div>
+            <MintScanner />
           </div>
         </div>
       </section>
@@ -167,10 +159,10 @@ export default async function Home() {
               <div className="relative grid gap-8 lg:grid-cols-[1fr_1.1fr]">
                 <div>
                   <p className="font-mono text-tiny uppercase tracking-[0.16em] text-text-tertiary">$SKRN Token</p>
-                  <h2 className="mt-3 text-h2">One token. Real revenue.</h2>
+                  <h2 className="mt-3 text-h2">Utility after product, not before.</h2>
                   <p className="mt-3 text-body text-text-secondary">
-                    $SKRN aligns builders, users, and stakers around a single protocol. No emissions — value
-                    accrues from real execution fees.
+                    $SKRN is the protocol token. Hold / stake perks (free runs, discounts, builder rank) ship as
+                    fee volume and vaults go live — no fake yield today.
                   </p>
                   <div className="mt-5 flex flex-wrap items-center gap-3">
                     <a
@@ -305,14 +297,14 @@ export default async function Home() {
               <div className="flex justify-center">
                 <Logo size={40} gradient />
               </div>
-              <h2 className="mt-6 text-h1 text-text-inverse">Start building on SolKernal</h2>
+              <h2 className="mt-6 text-h1 text-text-inverse">Scan first. Build next.</h2>
               <p className="mx-auto mt-3 max-w-prose text-body text-text-inverse/70">
-                Publish your first AI skill in minutes. Define a prompt, choose a model, set a listed fee, and go live
-                on the marketplace. On-chain earnings activate with settlement.
+                Run a free mint scan now. When you&apos;re ready, publish a tool-using skill and prepare for paid
+                settlement.
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
-                <Link href="/submit">
-                  <Button variant="accent" size="lg" trailingIcon={<ArrowRight size={18} />}>Submit a Skill</Button>
+                <Link href="/skills/rug-risk-scanner">
+                  <Button variant="accent" size="lg" trailingIcon={<ArrowRight size={18} />}>Run free scan</Button>
                 </Link>
                 <Link href="/skills">
                   <Button size="lg" variant="primary" className="bg-transparent border-text-inverse/25 hover:bg-text-inverse/10">
