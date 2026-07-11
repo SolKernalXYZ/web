@@ -48,7 +48,7 @@ export default function Footer() {
               <span className="font-mono text-small font-semibold uppercase tracking-[0.18em]">SolKernal</span>
             </Link>
             <p className="mt-4 max-w-xs text-small text-text-secondary">
-              The on-chain operating system for AI skills. Publish, execute, and compose autonomous skills on Solana — with real yield for stakers.
+              Solana-oriented AI skill marketplace. Run decision tools with optional live chain data. Payments and staking are not live yet.
             </p>
             <div className="mt-5 flex items-center gap-2">
               {socials.map(({ label, href, Icon }) => (
@@ -97,7 +97,7 @@ export default function Footer() {
           <p className="font-mono text-mono-sm text-text-tertiary">© {new Date().getFullYear()} SolKernal — Built on Solana</p>
           <p className="flex items-center gap-2 font-mono text-mono-sm text-text-tertiary">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-success" />
-            Web app live · on-chain settlement next
+            Web app live · payments & stake not live
           </p>
         </div>
       </div>

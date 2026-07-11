@@ -331,7 +331,7 @@ function FeeSplitVisual() {
   ];
 
   return (
-    <VisualFrame title="Execution fee split" caption="per paid run">
+    <VisualFrame title="Execution fee split" caption="planned design — not live">
       <div className="overflow-hidden rounded-md border border-border bg-bg-primary">
         <div className="flex h-4 w-full">
           <div className="bg-success" style={{ width: "50%" }} />

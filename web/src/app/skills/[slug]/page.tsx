@@ -380,7 +380,7 @@ export default function SkillDetailPage() {
               </span>
             </div>
             <p className="text-mono-sm text-text-tertiary">
-              Free trial live · chain payment not charged yet. Guest: 5 runs/hour without wallet.
+              Free trial · no payment charged · guest 5 runs/hour. Listed fee is display-only. Not financial advice.
             </p>
 
             <div>

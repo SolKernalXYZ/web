@@ -1,12 +1,12 @@
 const items = [
   "Web marketplace live",
-  "Multi-provider LLM execution",
-  "Mock fallback when keys missing",
-  "On-chain settlement coming next",
-  "Publish a skill in minutes",
+  "Guest free trial",
+  "Payments not enforced",
+  "Staking not live",
+  "Live-data tools when configured",
+  "Mock labeled if LLM fails",
   "Docs at /docs",
-  "Built for Solana",
-  "v1 web foundation",
+  "Not financial advice",
 ];
 
 function Track() {

@@ -55,9 +55,9 @@ export const docs: DocPage[] = [
     slug: "introduction",
     title: "Introduction",
     description:
-      "SolKernal is an on-chain operating system for AI skills: publish a skill once, execute it anywhere, and reward builders and stakers transparently on Solana.",
+      "SolKernal is a web marketplace for Solana-oriented AI skills. Payments, staking, and on-chain registry are planned — not live yet.",
     category: "Get started",
-    updated: "July 2, 2026",
+    updated: "July 11, 2026",
     related: ["quickstart", "how-solkernal-works"],
     sections: [
       {
@@ -66,19 +66,19 @@ export const docs: DocPage[] = [
         blocks: [
           {
             type: "p",
-            text: "SolKernal is a permissionless marketplace and execution layer for autonomous AI skills. A skill is a versioned prompt bundle with metadata, inputs, pricing, provider routing, and a public execution surface.",
+            text: "SolKernal is a web marketplace and execution layer for AI skills aimed at Solana users. A skill is a versioned prompt bundle with metadata, inputs, listed pricing, provider routing, and a public run surface.",
           },
           {
             type: "p",
-            text: "The protocol is built for Solana-native distribution. Skills can be run from the web app, shared as Solana Blinks, embedded in other products, or called by future developer tooling without rebuilding billing, routing, or proof-of-execution infrastructure.",
+            text: "Live today: browse skills, free guest trial runs (rate-limited), multi-provider LLM routing, optional live tools, and app-database receipts. Not live: wallet payment enforcement, $SKRN fee payouts, staking vaults, Blinks, or on-chain skill accounts.",
           },
           {
             type: "ul",
             items: [
-              "Builders publish prompt bundles and earn per execution.",
-              "Users run skills with a wallet and pay a clear $SKRN fee.",
-              "Stakers lock $SKRN and receive 50% of protocol execution fees.",
-              "Each execution creates a receipt with the skill, wallet, cost, provider, timestamp, and output hash.",
+              "Builders can publish prompt bundles to the off-chain registry.",
+              "Users can run skills for free under rate limits; listed fees are not charged yet.",
+              "Staking and 50% fee share are planned designs only — not active.",
+              "Each execution can create an app receipt (input/output). On-chain hashes are not live.",
             ],
           },
         ],
@@ -89,12 +89,12 @@ export const docs: DocPage[] = [
         blocks: [
           {
             type: "table",
-            headers: ["Audience", "What SolKernal gives them"],
+            headers: ["Audience", "What SolKernal gives them today"],
             rows: [
-              ["AI builders", "A monetized registry for reusable prompt systems, agents, and workflow primitives."],
-              ["End users", "A simple marketplace to run useful AI tools without subscriptions or account sprawl."],
-              ["Protocol teams", "Composable AI execution that can be embedded into wallets, social apps, dashboards, and games."],
-              ["Stakers", "Real yield from usage fees instead of inflationary emissions."],
+              ["AI builders", "A place to list reusable prompt/tool skills (earnings when settlement ships)."],
+              ["End users", "Decision tools (e.g. mint risk) without claiming paid or staked utility yet."],
+              ["Protocol teams", "A web surface that can grow into Blinks and embeds — roadmap, not shipped."],
+              ["Token holders", "No enforced product utility today; planned utility is not a promise of yield."],
             ],
           },
         ],
@@ -105,7 +105,7 @@ export const docs: DocPage[] = [
         blocks: [
           {
             type: "p",
-            text: "Three primitives carry the system: skills, executions, and revenue routing. Skills define what can run. Executions prove what happened. Revenue routing distributes the fee to builders, stakers, and the protocol treasury.",
+            text: "Three primitives: skills, executions, and (later) revenue routing. Skills define what can run. Executions record what happened in the app. Revenue routing to builders/stakers/treasury is designed for when on-chain settlement exists — it does not run today.",
           },
           {
             type: "visual",
@@ -563,7 +563,7 @@ export const docs: DocPage[] = [
           },
           {
             type: "p",
-            text: "Stakers receive 50% of execution fees. Rewards are designed to be usage-backed: when more users run paid skills, the staker pool receives more $SKRN.",
+            text: "Planned design only: stakers would receive a share of execution fees when on-chain settlement is live. No stake deposits or rewards are active today.",
           },
           {
             type: "table",

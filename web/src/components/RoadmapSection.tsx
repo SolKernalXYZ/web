@@ -9,14 +9,13 @@ const phases = [
     ring: "ring-success/30",
     label: "Web foundation live",
     items: [
-      "Skill marketplace with search, filter, sort",
-      "Skill detail pages with execution history",
-      "Multi-provider LLM (Cloudflare, Gemini, Grok, Groq)",
-      "Mock fallback when keys are missing",
-      "Phantom wallet connect (identity only)",
-      "Skill submission to off-chain registry",
-      "In-app docs and production Vercel deploy",
-      "Honest demo mode (no fake payment claims)",
+      "Skill marketplace (off-chain registry)",
+      "Guest free trial (rate-limited)",
+      "Multi-provider LLM + labeled mock fallback",
+      "Optional live tools (mint / wallet / market)",
+      "Public /r/ receipts in app DB",
+      "Phantom connect for identity only",
+      "No payment, stake, or yield claims live",
     ],
   },
   {
@@ -24,15 +23,15 @@ const phases = [
     color: "text-accent",
     bar: "bg-accent",
     ring: "ring-accent/30",
-    label: "Building now",
+    label: "Not shipped yet",
     items: [
-      "Solana smart contracts (Anchor programs)",
-      "Real $SKRN fee settlement on execute",
+      "Real SOL/USDC pay-per-run",
+      "Builder fee payouts",
       "Solana Blinks / Actions",
-      "On-chain execution receipts (PDA)",
-      "Live staking vault + fee distribution",
-      "Signed wallet intents for submit/execute",
-      "Builder analytics dashboard",
+      "On-chain execution receipts",
+      "Staking vaults (only after fee volume)",
+      "On-chain skill registry (Anchor)",
+      "Builder analytics",
     ],
   },
   {
@@ -82,7 +81,7 @@ export default function RoadmapSection() {
         <div className="mt-4 text-center">
           <h2 className="text-h2">What&apos;s next</h2>
           <p className="mt-2 text-body text-text-secondary">
-            Web marketplace and LLM execution are live. On-chain settlement, Blinks, and staking vaults are next.
+            Only shipped items are listed as Now. Payments, stake yield, and on-chain programs are Next/Later — not active.
           </p>
         </div>
       </Reveal>

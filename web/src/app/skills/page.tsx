@@ -175,8 +175,8 @@ export default function SkillsPage() {
         <p className="font-mono text-tiny uppercase tracking-[0.16em] text-accent">Registry</p>
         <h1 className="mt-2 text-h1">Skill marketplace</h1>
         <p className="mt-2 max-w-prose text-body text-text-secondary">
-          Solana decision tools first. Prefer <span className="text-success">Live data</span> skills that call chain
-          and market APIs — free trial, no wallet required.
+          Off-chain registry today. Prefer <span className="text-success">Live data</span> skills that call chain and
+          market APIs. Free trial (rate-limited). Fees are listed only — not charged yet. Not financial advice.
         </p>
       </div>
 
@@ -274,8 +274,9 @@ export default function SkillsPage() {
                         <Badge tone="accent" mono>{skill.category}</Badge>
                         {isLiveData(skill.tags) && <Badge tone="success" mono>Live data</Badge>}
                       </div>
-                      <span className="shrink-0 font-mono text-small font-semibold text-text-primary">
+                      <span className="shrink-0 font-mono text-small font-semibold text-text-primary" title="Listed only — not charged">
                         {Number(skill.fee).toLocaleString(undefined, { maximumFractionDigits: 2 })} $SKRN
+                        <span className="ml-1 text-mono-sm font-normal text-text-tertiary">listed</span>
                       </span>
                     </div>
                     <h2 className="mt-3 flex items-center gap-1.5 font-semibold text-text-primary">

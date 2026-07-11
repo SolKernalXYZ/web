@@ -12,10 +12,10 @@ export default function StakePage() {
           <path d="M5 12v6c0 1.66 3.13 3 7 3s7-1.34 7-3v-6" />
         </svg>
       </div>
-      <h1 className="text-h1">Staking — coming soon</h1>
+      <h1 className="text-h1">Staking — not live</h1>
       <p className="mt-3 text-body text-text-secondary">
-        On-chain $SKRN staking is not live yet. When vault programs ship, stakers will earn a share of protocol
-        execution fees. No off-chain stake balances are accepted today.
+        No vault, no APY, no fee share today. We do not accept stake deposits or display staked balances. A
+        usage-backed fee split for stakers is planned only after on-chain settlement is real.
       </p>
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <Link href="/skills">

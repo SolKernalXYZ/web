@@ -50,8 +50,8 @@ export default function SubmitPage() {
         <p className="font-mono text-tiny uppercase tracking-[0.16em] text-accent">Submit.md</p>
         <h1 className="mt-2 text-h1">Publish a skill</h1>
         <p className="mt-2 max-w-prose text-body text-text-secondary">
-          Register your AI skill to the SolKernal marketplace. Define a prompt, configure a model, set a price — and
-          earn a share of every execution.
+          Register a skill in the off-chain marketplace. Set a listed fee for later settlement — payments are not
+          charged to users yet, so builder earnings are not live.
         </p>
       </header>
 

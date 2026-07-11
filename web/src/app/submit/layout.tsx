@@ -2,10 +2,10 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Submit a Skill',
-  description: 'Publish your AI skill to SolKernal. Set pricing, choose your LLM provider, and earn 30% of every execution fee.',
+  description: 'Publish an AI skill to the SolKernal off-chain registry. Listed fees are not paid out yet.',
   openGraph: {
     title: 'Submit a Skill | SolKernal',
-    description: 'Publish AI skills to Solana. Set pricing and earn per execution.',
+    description: 'Publish AI skills. Builder fee splits are planned, not live.',
   },
 };
 

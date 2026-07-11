@@ -2,10 +2,10 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Skills Marketplace',
-  description: 'Browse the on-chain AI skill registry. Filter by category, LLM provider, and execution cost. Execute skills directly on Solana.',
+  description: 'Browse the SolKernal skill registry (off-chain today). Filter by category and provider. Free trial runs available; payments not enforced yet.',
   openGraph: {
     title: 'Skills Marketplace | SolKernal',
-    description: 'Browse and execute AI skills on Solana. Filter by category, provider, and cost.',
+    description: 'Browse and run AI skills. Live-data tools preferred. Payment settlement is not live.',
   },
 };
 

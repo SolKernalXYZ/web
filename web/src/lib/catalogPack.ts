@@ -120,7 +120,7 @@ export async function ensureCatalogPack(): Promise<{ upserted: number }> {
   ensurePromise = (async () => {
     let upserted = 0;
     for (const skill of catalogPack202607) {
-      await prisma.skill.upsert({
+      const row = await prisma.skill.upsert({
         where: { slug: skill.slug },
         update: {
           name: skill.name,
@@ -140,7 +140,7 @@ export async function ensureCatalogPack(): Promise<{ upserted: number }> {
           name: skill.name,
           category: skill.category,
           fee: skill.fee,
-          runs: skill.runs,
+          runs: 0,
           provider: skill.provider,
           model: skill.model,
           description: skill.description,
@@ -150,8 +150,42 @@ export async function ensureCatalogPack(): Promise<{ upserted: number }> {
           builderWallet: skill.builderWallet,
         },
       });
+      // Honest run counters: count real Execution rows only (kill seed vanity numbers).
+      const realRuns = await prisma.execution.count({ where: { skillId: row.id } });
+      if (row.runs !== realRuns) {
+        await prisma.skill.update({ where: { id: row.id }, data: { runs: realRuns } });
+      }
       upserted += 1;
     }
+
+    // Reconcile run counters for every skill (not only catalog pack).
+    const all = await prisma.skill.findMany({ select: { id: true, runs: true } });
+    for (const s of all) {
+      const realRuns = await prisma.execution.count({ where: { skillId: s.id } });
+      if (s.runs !== realRuns) {
+        await prisma.skill.update({ where: { id: s.id }, data: { runs: realRuns } });
+      }
+    }
+
+    // Never display invented stake TVL / distributed / stakers.
+    const totalExecutions = await prisma.execution.count();
+    await prisma.protocolStats.upsert({
+      where: { id: "global" },
+      create: {
+        id: "global",
+        totalStaked: 0,
+        totalDistributed: 0,
+        totalExecutions,
+        uniqueStakers: 0,
+      },
+      update: {
+        totalStaked: 0,
+        totalDistributed: 0,
+        uniqueStakers: 0,
+        totalExecutions,
+      },
+    });
+
     return { upserted };
   })().catch((err) => {
     ensurePromise = null;

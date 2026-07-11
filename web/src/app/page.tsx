@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/db';
 import Button from '@/components/Button';
-import StatBox from '@/components/StatBox';
 import Reveal from '@/components/Reveal';
 import Logo from '@/components/Logo';
 import MintScanner from '@/components/MintScanner';
@@ -14,62 +13,47 @@ import {
 } from '@/components/icons';
 
 const navCards = [
-  { href: '/skills', title: 'Skills', ext: 'db', Icon: SkillsIcon, desc: 'Browse decision tools. Prefer Live data skills that pull chain & market signals.' },
-  { href: '/skills/rug-risk-scanner', title: 'Scan', ext: 'exe', Icon: RunIcon, desc: 'Paste a mint. Get a structured rug / risk brief in seconds — free trial, no wallet.' },
-  { href: '/stake', title: 'Stake', ext: 'db', Icon: StakeIcon, desc: 'Staking vaults are next. Planned: earn a share of protocol execution fees in $SKRN.' },
-  { href: '/submit', title: 'Submit', ext: 'md', Icon: SubmitIcon, desc: 'Publish a tool-using skill. Set pricing. Prepare to earn per execution.' },
+  { href: '/skills', title: 'Skills', ext: 'db', Icon: SkillsIcon, desc: 'Browse listed skills. Prefer Live data tools that call chain & market APIs.' },
+  { href: '/skills/rug-risk-scanner', title: 'Scan', ext: 'exe', Icon: RunIcon, desc: 'Paste a mint. Get a structured risk brief — free trial, no wallet. Not financial advice.' },
+  { href: '/stake', title: 'Stake', ext: 'db', Icon: StakeIcon, desc: 'Not live. Vaults and fee share are planned only after on-chain settlement exists.' },
+  { href: '/submit', title: 'Submit', ext: 'md', Icon: SubmitIcon, desc: 'Publish a skill to the off-chain registry. Paid earnings start when settlement ships.' },
 ];
 
 const features = [
-  { Icon: RegistryIcon, title: 'Live-data skills', desc: 'Prefer skills that call Solana + market tools — mint authorities, balances, prices — not generic chat wrappers.' },
-  { Icon: BlinkIcon, title: 'Free guest trial', desc: 'Run without a wallet (rate-limited). Connect later for identity when paid settlement ships.' },
-  { Icon: YieldIcon, title: 'Fee design', desc: 'Target split when settlement is live: builder / stakers / protocol. No fake APY today.' },
-  { Icon: ReceiptIcon, title: 'Shareable receipts', desc: 'Every run gets a public /r/ link with highlights + Post on X. On-chain hashes come next.' },
-  { Icon: RouterIcon, title: 'Multi-provider LLM', desc: 'Route to Cloudflare Workers AI, Google Gemini, Grok (xAI), or Groq. Mock fallback when keys are missing.' },
-  { Icon: ComposeIcon, title: 'Mint-first wedge', desc: 'Homepage scanner and rug tools first. Pipelines and full OS composition later.' },
+  { Icon: RegistryIcon, title: 'Live-data skills', desc: 'Skills can call Solana + market tools (mint info, balances, prices). Output quality depends on tools + model.' },
+  { Icon: BlinkIcon, title: 'Free guest trial', desc: 'Rate-limited runs without a wallet. Payment is not charged today.' },
+  { Icon: YieldIcon, title: 'Fee design (planned)', desc: 'Target split is designed for later on-chain settlement. No staking APY or fee payouts today.' },
+  { Icon: ReceiptIcon, title: 'Shareable receipts', desc: 'Each run can get a public /r/ link in the app DB. On-chain receipt hashes are not live yet.' },
+  { Icon: RouterIcon, title: 'Multi-provider LLM', desc: 'Cloudflare, Gemini, Grok, or Groq when keys are configured. Mock is labeled if a provider fails.' },
+  { Icon: ComposeIcon, title: 'Mint-first wedge', desc: 'Homepage scanner and Solana risk tools first. Full OS composition is later work.' },
 ];
 
 const steps = [
-  { n: '01', title: 'Paste a mint (or wallet)', desc: 'Start on the homepage scanner or any Live data skill. No wallet required for free trial.' },
-  { n: '02', title: 'Desk runs tools + LLM', desc: 'SolKernal pulls chain/market data where the skill allows, then structures a decision-ready brief.' },
-  { n: '03', title: 'Get score + full output', desc: 'Risk highlights when parseable, full markdown/JSON below. Mock vs live is always labeled.' },
-  { n: '04', title: 'Share the receipt', desc: 'Public /r/ link + Post on X. Fee settlement and on-chain proofs ship after the loop works.' },
+  { n: '01', title: 'Paste a mint (or wallet)', desc: 'Use the homepage scanner or a Live data skill. Free trial does not require a wallet.' },
+  { n: '02', title: 'Tools + LLM run', desc: 'Where enabled, the skill may call chain/market tools, then the model formats a brief.' },
+  { n: '03', title: 'Read the output', desc: 'Risk highlights when the model includes them. Mock vs live is labeled. Not financial advice.' },
+  { n: '04', title: 'Share the receipt', desc: 'Optional public /r/ link. Fee payment and on-chain proofs are not enforced yet.' },
 ];
 
 const tiers = [
-  { hold: 'Hold $SKRN', perk: 'Planned: free daily runs & rate limits' },
-  { hold: 'Builders', perk: 'Planned: rank boost for staked listings' },
-  { hold: 'Stakers', perk: 'Fee share only after real on-chain volume' },
+  { hold: 'Hold $SKRN', perk: 'Utility planned — not active' },
+  { hold: 'Builders', perk: 'Listing works; paid splits planned' },
+  { hold: 'Stakers', perk: 'Vaults not live — no yield UI' },
 ];
 
-// Revalidate landing stats at most once per minute (ISR) so the figures stay
-// reasonably fresh without a database hit on every request.
+// Revalidate landing stats at most once per minute (ISR).
 export const revalidate = 60;
 
-/** Compact number formatter: 342500000 → "342.5M", 28420.5 → "28.4K". */
-function compact(n: number): string {
-  if (n >= 1_000_000_000) return `${(n / 1_000_000_000).toFixed(1)}B`;
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
-  return n.toLocaleString();
-}
-
 async function getStats() {
-  // Live values from the database; fall back to zeros if the DB is unreachable
-  // so the landing page never crashes and never shows fabricated figures.
+  // Only real counts. Never invent TVL / stakers / distributed.
   try {
-    const [skillCount, stats] = await Promise.all([
+    const [skillCount, execCount] = await Promise.all([
       prisma.skill.count({ where: { active: true } }),
-      prisma.protocolStats.findUnique({ where: { id: 'global' } }),
+      prisma.execution.count(),
     ]);
-    return {
-      skillCount,
-      totalStaked: stats?.totalStaked ?? 0,
-      totalDistributed: stats?.totalDistributed ?? 0,
-      uniqueStakers: stats?.uniqueStakers ?? 0,
-    };
+    return { skillCount, execCount };
   } catch {
-    return { skillCount: 0, totalStaked: 0, totalDistributed: 0, uniqueStakers: 0 };
+    return { skillCount: 0, execCount: 0 };
   }
 }
 
@@ -92,8 +76,8 @@ export default async function Home() {
               <span className="text-brand-gradient">Run the desk.</span>
             </h1>
             <p className="mt-6 max-w-prose animate-fade-up text-body-lg text-text-secondary [animation-delay:120ms]">
-              Paste a mint or wallet — get live-data risk, authorities, and signal in seconds. Marketplace and
-              multi-provider LLM are live; on-chain fee settlement is next.
+              Paste a mint or wallet for a structured risk brief powered by tools + LLM. Web app is live.
+              Payments, staking, and on-chain settlement are not live yet. Not financial advice.
             </p>
             <div className="mt-8 flex animate-fade-up flex-wrap gap-3 [animation-delay:180ms]">
               <Link
@@ -113,8 +97,8 @@ export default async function Home() {
             <dl className="mt-12 grid animate-fade-up grid-cols-3 gap-px overflow-hidden rounded-lg border border-border bg-border [animation-delay:240ms]">
               {[
                 { v: String(stats.skillCount), l: 'Skills listed' },
-                { v: 'Free', l: 'Guest trial' },
-                { v: 'Live', l: 'Chain tools' },
+                { v: String(stats.execCount), l: 'Runs recorded' },
+                { v: 'Off', l: 'Payments / stake' },
               ].map((s) => (
                 <div key={s.l} className="bg-bg-primary px-4 py-4">
                   <dd className="font-mono text-h2 tabular-nums text-text-primary">{s.v}</dd>
@@ -164,10 +148,10 @@ export default async function Home() {
               <div className="relative grid gap-8 lg:grid-cols-[1fr_1.1fr]">
                 <div>
                   <p className="font-mono text-tiny uppercase tracking-[0.16em] text-text-tertiary">$SKRN Token</p>
-                  <h2 className="mt-3 text-h2">Utility after product, not before.</h2>
+                  <h2 className="mt-3 text-h2">Token exists. Product utility is not live.</h2>
                   <p className="mt-3 text-body text-text-secondary">
-                    $SKRN is the protocol token. Hold / stake perks (free runs, discounts, builder rank) ship as
-                    fee volume and vaults go live — no fake yield today.
+                    $SKRN is the community token on Pump.fun. Free runs, fee discounts, staking, and builder rank are
+                    planned — none of those utilities are enforced in the app today.
                   </p>
                   <div className="mt-5 flex flex-wrap items-center gap-3">
                     <a
@@ -206,17 +190,17 @@ export default async function Home() {
             <div className="h-full rounded-xl border border-border bg-bg-subtle p-6 sm:p-8">
               <Badgeish tone="danger">The Problem</Badgeish>
               <div className="mt-4 space-y-3 text-body text-text-secondary">
-                <p>AI execution is fragmented. Every tool has its own interface, billing, and auth. Developers rebuild the same prompt wrappers. Users pay subscriptions for tools they use once.</p>
-                <p>The result: thousands of AI wrappers that can&apos;t talk to each other, no on-chain proof of execution, and zero value accrual to the people who build the best prompts.</p>
+                <p>Solana users still ape mints with thin context. Generic chatbots invent numbers. Traders bounce between explorers, DexScreener, and Twitter.</p>
+                <p>We want one place to run decision tools that can pull live chain data — without pretending staking or payments already work.</p>
               </div>
             </div>
           </Reveal>
           <Reveal index={1}>
             <div className="h-full rounded-xl border border-accent/30 bg-accent-subtle/40 p-6 sm:p-8">
-              <Badgeish tone="accent">Our Solution</Badgeish>
+              <Badgeish tone="accent">What ships today</Badgeish>
               <div className="mt-4 space-y-3 text-body text-text-secondary">
-                <p>SolKernal is building an operating system for AI skills on Solana. A skill is a versioned prompt bundle with defined inputs, pricing, and LLM routing — registered in the app today, moving on-chain next.</p>
-                <p>Anyone can publish and execute from the web app. Staking yield and Blinks are designed into the protocol and will ship as on-chain programs land. One marketplace, multi-provider routing, transparent fee design.</p>
+                <p>A web marketplace of AI skills, multi-provider LLM routing, optional live tools (mint, wallet, market), free guest trial, and public run receipts in our database.</p>
+                <p>Not live yet: wallet payment enforcement, $SKRN fee splits, staking vaults, Blinks, or on-chain skill registry. Those are roadmap items, not current features.</p>
               </div>
             </div>
           </Reveal>
@@ -246,7 +230,7 @@ export default async function Home() {
         {/* ── Features ────────────────────────────────────── */}
         <section id="features" className="scroll-mt-20">
           <Reveal>
-            <SectionHeading eyebrow="Capabilities" title="Built for composable AI" />
+            <SectionHeading eyebrow="Capabilities" title="What the web app does" />
           </Reveal>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f, i) => (
@@ -268,25 +252,25 @@ export default async function Home() {
 
         <SectionDivider />
 
-        {/* ── Staking preview ─────────────────────────────── */}
+        {/* ── Staking honesty ─────────────────────────────── */}
         <section>
           <Reveal>
             <div className="relative overflow-hidden rounded-xl border border-border bg-bg-subtle p-6 sm:p-8">
               <GlowOrb className="left-[-40px] bottom-[-60px] h-56 w-56" />
               <div className="relative">
-                <SectionHeading eyebrow="Real Yield" title="Stake & earn" />
+                <SectionHeading eyebrow="Not live" title="Staking is disabled" />
                 <p className="mt-3 max-w-prose text-body text-text-secondary">
-                  Planned design: stake $SKRN into a protocol vault. When on-chain fee settlement is live, a share of
-                  each execution fee flows to stakers pro-rata. Staking UI is intentionally disabled until programs ship.
+                  There is no stake vault, no APY, and no fee distribution today. We will not show staked TVL or
+                  staker counts until on-chain programs are real. Planned later: usage-backed fee share for stakers.
                 </p>
-                <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                  <StatBox value={`${compact(stats.totalStaked)}`} label="$SKRN Staked" icon={<StakeIcon size={16} />} />
-                  <StatBox value={`${compact(stats.totalDistributed)}`} label="Distributed" positive icon={<YieldIcon size={16} />} />
-                  <StatBox value={stats.uniqueStakers.toLocaleString()} label="Stakers" icon={<ReceiptIcon size={16} />} />
-                </div>
-                <div className="mt-6">
+                <div className="mt-6 flex flex-wrap gap-3">
                   <Link href="/stake">
-                    <Button trailingIcon={<ArrowRight size={16} />}>Start staking</Button>
+                    <Button variant="secondary">Read stake status</Button>
+                  </Link>
+                  <Link href="/skills/rug-risk-scanner">
+                    <Button variant="accent" trailingIcon={<ArrowRight size={16} />}>
+                      Use a live skill instead
+                    </Button>
                   </Link>
                 </div>
               </div>
@@ -304,8 +288,7 @@ export default async function Home() {
               </div>
               <h2 className="mt-6 text-h1 text-text-inverse">Scan first. Build next.</h2>
               <p className="mx-auto mt-3 max-w-prose text-body text-text-inverse/70">
-                Run a free mint scan now. When you&apos;re ready, publish a tool-using skill and prepare for paid
-                settlement.
+                Run a free mint scan now. Publishing skills is open; paid fee splits are not live yet.
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Link href="/skills/rug-risk-scanner">

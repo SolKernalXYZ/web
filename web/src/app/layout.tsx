@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     template: '%s | SolKernal',
   },
   description:
-    'Solana decision tools with live chain data. Paste a mint, get risk and signal in seconds. Free trial — no wallet required.',
+    'Solana decision tools with optional live chain data. Free guest trial. Payments and staking are not live. Not financial advice.',
   keywords: ['Solana', 'AI', 'rug scanner', 'token risk', 'Skills', 'Marketplace', 'LLM', '$SKRN'],
   authors: [{ name: 'SolKernal' }],
   openGraph: {
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     siteName: 'SolKernal',
     title: 'SolKernal — Don’t ape blind. Run the desk.',
     description:
-      'Paste any SPL mint for a live-data risk brief. Free guest trial. Public run receipts you can share.',
+      'Paste an SPL mint for a risk brief. Free guest trial. No payment or staking claims — those are not live.',
     url: siteUrl,
     locale: 'en_US',
     images: [{ url: '/og.svg', width: 1200, height: 630, alt: 'SolKernal' }],
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'SolKernal — Don’t ape blind. Run the desk.',
-    description: 'Solana mint risk scans and decision tools. Free trial, no wallet required.',
+    description: 'Solana mint risk tools. Free trial. Payments and staking not live. Not financial advice.',
     images: ['/og.svg'],
   },
   robots: { index: true, follow: true },

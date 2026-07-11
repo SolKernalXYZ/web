@@ -7,23 +7,23 @@ import { SearchIcon, WalletIcon, BoltIcon, CheckIcon, ArrowRight } from '@/compo
 
 export const metadata: Metadata = {
   title: 'Run Skills',
-  description: 'Execute any AI skill on the SolKernal network. Pay with a Solana wallet, get results in seconds.',
+  description: 'How to run SolKernal skills. Free trial available; wallet payment is not enforced yet.',
 };
 
 const steps = [
   { Icon: SearchIcon, title: 'Find a skill', body: <>Browse the <Link href="/skills" className="text-accent link-underline">marketplace</Link> and open a skill detail page.</> },
-  { Icon: WalletIcon, title: 'Connect wallet', body: <>Connect Phantom (more wallets later). Used for identity; chain payment not enforced yet.</> },
-  { Icon: BoltIcon, title: 'Provide input', body: <>Fill in the skill&apos;s input fields and review the listed fee and planned split.</> },
-  { Icon: CheckIcon, title: 'Execute & receive', body: <>Run the skill. Output returns from the configured LLM (or a labeled mock if keys are missing).</> },
+  { Icon: WalletIcon, title: 'Wallet optional', body: <>Guest free trial works without a wallet. Connect Phantom only for identity if you want.</> },
+  { Icon: BoltIcon, title: 'Provide input', body: <>Paste a mint, wallet, or other input. Listed fees are not charged today.</> },
+  { Icon: CheckIcon, title: 'Execute & receive', body: <>Run the skill. Output from the LLM (or a labeled mock if keys fail). Not financial advice.</> },
 ];
 
 const specs = [
-  ['Payment (live)', 'Not enforced yet (demo)'],
-  ['Listed fee token', '$SKRN'],
+  ['Payment', 'Not enforced'],
+  ['Staking', 'Not live'],
+  ['Listed fee', 'Display only ($SKRN)'],
   ['Providers', 'Cloudflare, Gemini, Grok, Groq'],
-  ['Receipt (today)', 'App database record'],
-  ['Receipt (next)', 'On-chain PDA / hash'],
-  ['Wallet', 'Phantom adapter'],
+  ['Receipt today', 'App database /r/ link'],
+  ['On-chain registry', 'Not live'],
 ];
 
 export default function RunPage() {
@@ -35,8 +35,8 @@ export default function RunPage() {
           <p className="font-mono text-tiny uppercase tracking-[0.16em] text-accent">Run.exe</p>
           <h1 className="mt-2 text-h1">Execute any skill in seconds</h1>
           <p className="mx-auto mt-3 max-w-prose text-body text-text-secondary">
-            Find a skill, connect your wallet, and run it. SolKernal routes your input to the configured LLM and
-            returns a result. On-chain fee settlement is the next protocol milestone.
+            Find a skill and run it. Free trial does not require payment. Wallet is optional for identity.
+            On-chain fee settlement is not live.
           </p>
         </div>
 
