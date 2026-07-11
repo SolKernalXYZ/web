@@ -843,10 +843,10 @@ export const docs: DocPage[] = [
     slug: "roadmap",
     title: "Roadmap",
     description:
-      "A practical long-term build sequence for SolKernal, ordered by dependency rather than dates, quarters, or marketing milestones.",
+      "What is shipped on the web app today, what we are building next, and what stays later — sequenced by dependency, with no fake live claims.",
     category: "Platform",
-    updated: "July 2, 2026",
-    related: ["architecture", "production-checklist", "governance"],
+    updated: "July 11, 2026",
+    related: ["architecture", "production-checklist", "introduction"],
     sections: [
       {
         id: "principles",
@@ -854,38 +854,107 @@ export const docs: DocPage[] = [
         blocks: [
           {
             type: "p",
-            text: "This roadmap is intentionally sequenced instead of dated. SolKernal should only move to the next layer when the current layer is reliable, observable, and safe enough for real users and builders.",
+            text: "This roadmap is sequenced by dependency, not marketing dates. We only move forward when the current layer is honest, usable, and measurable. Payments, staking yield, and on-chain programs are not claimed as live until they work in production.",
           },
           {
             type: "ul",
             items: [
-              "Ship trust before scale: execution quality, receipts, and abuse controls come before aggressive distribution.",
-              "Keep the protocol useful at every stage: each milestone should improve the live product, not only prepare future infrastructure.",
-              "Avoid fake certainty: no dates, quarters, or month-based claims until external dependencies are locked.",
-              "Prefer reversible releases: launch with guardrails, measure usage, and harden before decentralizing sensitive controls.",
+              "Honesty first: no fake TVL, APY, or fee-payout claims.",
+              "Wedge before platform: Solana live-data decision tools before a generic AI OS.",
+              "Revenue before vaults: pay-per-run and builder payouts before staking UI.",
+              "Trust before scale: receipts, mock labels, rate limits before aggressive growth.",
+              "One public surface at a time: each ship should improve something a stranger can try in 30 seconds.",
             ],
           },
         ],
       },
       {
-        id: "sequence",
-        title: "Build sequence",
+        id: "overview",
+        title: "Phase overview",
         blocks: [
           {
             type: "visual",
             variant: "roadmap",
           },
           {
-            type: "ol",
+            type: "table",
+            headers: ["Phase", "Intent", "Status language"],
+            rows: [
+              ["Shipped", "What production does today", "Live on the web app"],
+              ["Building", "Near-term product depth and UX", "In progress / next deploys"],
+              ["Next", "Revenue and distribution", "Planned — not live"],
+              ["Later", "On-chain protocol and scale", "Only after usage + fee volume"],
+            ],
+          },
+        ],
+      },
+      {
+        id: "shipped",
+        title: "Shipped (live on web)",
+        blocks: [
+          {
+            type: "ul",
             items: [
-              "Foundation: stabilize the web app, docs, marketplace browsing, skill detail pages, submit flow, execution API, staking dashboard, and production deployment path.",
-              "Execution trust: add stronger wallet verification, durable receipt records, output hashing, execution status states, provider error handling, and clear mock-versus-real execution boundaries.",
-              "Builder quality: introduce skill review tools, version history, prompt safety checks, analytics, featured skills, and a lightweight moderation queue for public submissions.",
-              "Payment and settlement: connect real $SKRN payment flows, enforce fee collection before execution, and make revenue attribution auditable across builders, stakers, and treasury.",
-              "On-chain protocol: deploy the Skill Registry, Execution Receipt, Staking Pool, and Fee Router programs once the off-chain product behavior has proven stable.",
-              "Distribution surfaces: ship Solana Blinks, external embed flows, API examples, and partner integrations so skills can run outside the main web app.",
-              "Composability: support skill chaining, reusable input schemas, workflow templates, and multi-step execution receipts for agent-style pipelines.",
-              "Governance and ecosystem: progressively move protocol parameters, treasury programs, provider policy, and marketplace rules into transparent governance once the system has enough real usage data.",
+              "Skill marketplace (off-chain registry) with search and filters.",
+              "Guest free trial execute (rate-limited; wallet optional).",
+              "Homepage mint scanner and rug / risk skill path.",
+              "Multi-provider LLM routing with labeled mock fallback.",
+              "Optional live tools (mint, wallet, market data).",
+              "Public /r/[id] run receipts with share and OG images (app DB).",
+              "Skill submission form; listed fees are display-only.",
+              "Honest copy: payments and staking clearly not live.",
+            ],
+          },
+        ],
+      },
+      {
+        id: "building",
+        title: "Building (near-term product)",
+        blocks: [
+          {
+            type: "ul",
+            items: [
+              "Live-data marketplace focus (feature tool-using skills; bury pure chat wrappers).",
+              "Structured result cards (risk score / verdict UI, not only raw markdown).",
+              "Streaming execution output for faster-feeling scans.",
+              "Docs for free trial, mock vs live, and Live data meaning.",
+              "Skill quality bar (tool allowlists, stronger rug and wallet skills).",
+              "Builder mini-dashboard (runs and recent executions before real revenue).",
+            ],
+          },
+        ],
+      },
+      {
+        id: "next-phase",
+        title: "Next (revenue and distribution)",
+        blocks: [
+          {
+            type: "ul",
+            items: [
+              "Pay-per-run in SOL/USDC after free quota (start with one flagship skill).",
+              "Builder fee payouts once settlement exists (split design is planned, not live).",
+              "Solana Blinks / Actions for top skills.",
+              "Telegram /scan bot for degen distribution.",
+              "API keys for bots and partners with rate limits.",
+              "$SKRN soft utility (hold for free tier or discount) only when verifiable — no fake APY.",
+            ],
+          },
+        ],
+      },
+      {
+        id: "later-phase",
+        title: "Later (protocol and scale)",
+        blocks: [
+          {
+            type: "ul",
+            items: [
+              "On-chain execution receipt hashes / PDAs.",
+              "On-chain skill registry (Anchor or equivalent).",
+              "Staking vaults and fee share only after real paid volume.",
+              "Skill versioning, fork, and remix.",
+              "Builder reputation and ranking signals.",
+              "Skill pipelines / composability.",
+              "Governance and higher-SLA API tiers with enough usage data.",
             ],
           },
         ],
@@ -898,11 +967,11 @@ export const docs: DocPage[] = [
             type: "table",
             headers: ["Gate", "What must be true before moving forward"],
             rows: [
-              ["Product reliability", "Core flows work consistently: browse, submit, execute, inspect receipts, stake, claim, and recover from failed provider calls."],
-              ["Economic correctness", "Fee math, attribution, receipt records, and staking rewards reconcile across UI, API, and database records."],
-              ["Security posture", "Wallet verification, rate limits, secret handling, prompt safety, and production monitoring are in place."],
-              ["Protocol confidence", "Smart contracts are audited or heavily reviewed, tested against realistic flows, and deployed with upgrade and pause procedures."],
-              ["Ecosystem quality", "The marketplace has enough useful skills, builder documentation, and moderation policy to support public growth."],
+              ["Product reliability", "Browse, execute, and receipts work consistently; mock vs live is always labeled."],
+              ["Honest economics", "No payment or stake claims until transfer + vault programs actually run."],
+              ["Security posture", "Rate limits, secret handling, and basic abuse controls in place."],
+              ["Usage signal", "Weekly active runners and organic shares before heavy protocol complexity."],
+              ["Protocol confidence", "Contracts reviewed/tested with upgrade and pause procedures before mainnet money paths."],
             ],
           },
         ],
@@ -914,7 +983,7 @@ export const docs: DocPage[] = [
           {
             type: "callout",
             title: "Scope discipline",
-            text: "SolKernal should not chase every AI trend. The roadmap excludes model training, custodial fund management beyond execution settlement, EVM support in v1, and private user-data storage on-chain.",
+            text: "Out of scope for the current wedge: training foundation models, custodial fund management beyond settlement, multi-chain expansion before Solana wins, DAO theater before usage, fake yield or inflated metrics, and private user-data storage on-chain.",
             tone: "warning",
           },
         ],

@@ -11,6 +11,7 @@ import {
   SkillsIcon, RunIcon, StakeIcon, SubmitIcon, ReceiptIcon,
   CheckIcon, SparkIcon,
 } from "./icons";
+import { roadmapPhases as canonicalRoadmap } from "@/lib/roadmap";
 
 const links = [
   { href: "/docs", label: "Docs", ext: "md", Icon: ReceiptIcon },
@@ -20,47 +21,15 @@ const links = [
   { href: "/submit", label: "Submit", ext: "md", Icon: SubmitIcon },
 ];
 
-const roadmapPhases = [
-  {
-    title: "Live now",
-    subtitle: "web",
-    status: "done" as const,
-    items: [
-      "Skill marketplace (off-chain)",
-      "Free guest trial runs",
-      "Multi-provider LLM + mock label",
-      "Live-data tools when configured",
-      "App DB receipts (/r)",
-      "No payment or stake live",
-    ],
-  },
-  {
-    title: "Not live",
-    subtitle: "next",
-    status: "progress" as const,
-    items: [
-      "Pay-per-run settlement",
-      "Builder fee payouts",
-      "Staking vaults",
-      "Blinks / Actions",
-      "On-chain receipts",
-      "On-chain skill registry",
-    ],
-  },
-  {
-    title: "Later",
-    subtitle: "maybe",
-    status: "later" as const,
-    items: [
-      "More providers / local models",
-      "Skill fork / remix",
-      "Builder reputation",
-      "Governance",
-      "Mobile clients",
-      "Higher-SLA API",
-    ],
-  },
-];
+const roadmapPhases = canonicalRoadmap.map((p) => ({
+  title: p.status,
+  subtitle: p.label,
+  status: (p.id === "shipped" ? "done" : p.id === "building" || p.id === "next" ? "progress" : "later") as
+    | "done"
+    | "progress"
+    | "later",
+  items: p.items.slice(0, 5).map((i) => i.title),
+}));
 
 function RoadmapIcon(p: { size?: number; className?: string }) {
   return (
@@ -182,7 +151,7 @@ export default function Nav() {
 
               {roadmapOpen && (
                 <div className="absolute right-0 top-full mt-2 w-[640px] origin-top-right rounded-xl border border-border bg-bg-primary shadow-xl ring-1 ring-black/5 animate-in fade-in slide-in-from-top-2 duration-200" role="menu">
-                  <div className="grid grid-cols-3 gap-px bg-border">
+                  <div className="grid grid-cols-2 gap-px bg-border lg:grid-cols-4">
                     {roadmapPhases.map((phase) => (
                       <div key={phase.title} className="flex flex-col bg-bg-subtle p-4">
                         <div className="mb-3 flex items-center gap-2 border-b border-border pb-2">

@@ -382,7 +382,7 @@ function StakingRevenueVisual() {
   ];
 
   return (
-    <VisualFrame title="Usage-backed staking yield" caption="not emissions">
+    <VisualFrame title="Planned fee split" caption="design only — not live">
       <div className="space-y-3 rounded-md border border-border bg-bg-primary p-4">
         {bars.map((bar) => (
           <div key={bar.label} className="grid gap-2 sm:grid-cols-[8rem_1fr_3rem] sm:items-center">
@@ -400,18 +400,14 @@ function StakingRevenueVisual() {
 
 function RoadmapVisual() {
   const stages = [
-    ["01", "Foundation", "Live app, docs, marketplace, submit, execute, staking."],
-    ["02", "Trust", "Wallet verification, durable receipts, provider resilience."],
-    ["03", "Quality", "Versioning, review tools, analytics, moderation."],
-    ["04", "Settlement", "Real payment flow and auditable revenue attribution."],
-    ["05", "Protocol", "Registry, receipt, staking, and fee router programs."],
-    ["06", "Distribution", "Blinks, embeds, API examples, partner surfaces."],
-    ["07", "Composability", "Skill chaining, schemas, workflow templates."],
-    ["08", "Governance", "Transparent controls for policy, treasury, and upgrades."],
+    ["01", "Shipped", "Marketplace, free trial, mint scanner, tools, /r receipts, honest claims."],
+    ["02", "Building", "Live-data focus, structured results, streaming, builder mini-dashboard."],
+    ["03", "Next", "Pay-per-run, builder payouts, Blinks, Telegram, API keys, soft $SKRN utility."],
+    ["04", "Later", "On-chain receipts, registry, stake vaults after volume, remix, governance."],
   ];
 
   return (
-    <VisualFrame title="Long-term roadmap" caption="sequenced, not dated">
+    <VisualFrame title="Product roadmap" caption="sequenced · no fake live claims">
       <div className="relative">
         <div className="absolute left-[1.05rem] top-4 hidden h-[calc(100%-2rem)] w-px bg-border sm:block" aria-hidden="true" />
         <div className="grid gap-3">
