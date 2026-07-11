@@ -400,8 +400,8 @@ const skills = [
     category: "DeFi",
     fee: 0.6,
     runs: 0,
-    provider: "Grok",
-    model: "grok-4-1-fast-reasoning",
+    provider: "Cloudflare",
+    model: "@cf/meta/llama-4-scout-17b-16e-instruct",
     description:
       "Heuristic rug / risk scan for an SPL mint: mint authority, liquidity, volume, and market structure via on-chain + DexScreener data.",
     builderWallet: BUILDER,

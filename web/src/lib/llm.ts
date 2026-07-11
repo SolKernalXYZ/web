@@ -173,109 +173,173 @@ function resolveProvider(raw: string | undefined): "cloudflare" | "groq" | "goog
   return "cloudflare";
 }
 
-export async function executeLLM(req: LLMRequest): Promise<LLMResponse> {
-  const provider = resolveProvider(req.provider);
+const CF_FALLBACK_MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct";
 
-  if (provider === "google" && !getGoogleCredentials()) {
-    return mockResponse(req, "missing GOOGLE_API_KEY");
-  }
-  if (provider === "groq" && !getGroqCredentials()) {
-    return mockResponse(req, "missing GROQ_API_KEY");
-  }
-  if (provider === "grok" && !getGrokCredentials()) {
-    return mockResponse(req, "missing XAI_API_KEY");
-  }
+function providerReady(provider: string): string | null {
+  if (provider === "google" && !getGoogleCredentials()) return "missing GOOGLE_API_KEY";
+  if (provider === "groq" && !getGroqCredentials()) return "missing GROQ_API_KEY";
+  if (provider === "grok" && !getGrokCredentials()) return "missing XAI_API_KEY";
   if (provider === "cloudflare" && !getCloudflareCredentials()) {
-    return mockResponse(req, "missing Cloudflare Workers AI credentials");
+    return "missing Cloudflare Workers AI credentials";
+  }
+  return null;
+}
+
+async function runOnce(
+  provider: string,
+  model: string,
+  systemPrompt: string,
+  userInput: string,
+): Promise<LLMResponse> {
+  const missing = providerReady(provider);
+  if (missing) return mockResponse({ provider, model, systemPrompt, userInput }, missing);
+
+  const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+    { role: "system", content: systemPrompt },
+    { role: "user", content: userInput },
+  ];
+
+  const tools = supportsTools(model) ? getAllToolDefinitions() : undefined;
+  const response = await callLLM(provider, model, messages, tools);
+  if (!response) {
+    return mockResponse({ provider, model, systemPrompt, userInput }, "failed to create LLM client");
   }
 
-  try {
-    const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
-      { role: "system", content: req.systemPrompt },
-      { role: "user", content: req.userInput },
+  const message = response.choices[0]?.message;
+  if (!message) {
+    return mockResponse({ provider, model, systemPrompt, userInput }, "empty LLM response");
+  }
+
+  const toolCalls = message.tool_calls?.filter(
+    (tc): tc is OpenAI.Chat.Completions.ChatCompletionMessageFunctionToolCall =>
+      "function" in tc,
+  );
+
+  const textToolCall = !toolCalls?.length ? parseTextToolCall(message.content || "") : null;
+  const hasToolCall = (toolCalls && toolCalls.length > 0) || textToolCall;
+
+  if (hasToolCall) {
+    const toolMessages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+      ...messages,
+      {
+        role: "assistant",
+        content: message.content,
+        tool_calls: toolCalls?.length ? toolCalls : undefined,
+      } as OpenAI.Chat.Completions.ChatCompletionAssistantMessageParam,
     ];
 
-    const tools = supportsTools(req.model)
-      ? getAllToolDefinitions()
-      : undefined;
-
-    const response = await callLLM(provider, req.model, messages, tools);
-    if (!response) {
-      return mockResponse(req, "failed to create LLM client");
-    }
-
-    const message = response.choices[0]?.message;
-    if (!message) {
-      return { output: "", mocked: false };
-    }
-
-    const toolCalls = message.tool_calls?.filter(
-      (tc): tc is OpenAI.Chat.Completions.ChatCompletionMessageFunctionToolCall =>
-        "function" in tc,
-    );
-
-    const textToolCall = !toolCalls?.length ? parseTextToolCall(message.content || "") : null;
-
-    const hasToolCall = (toolCalls && toolCalls.length > 0) || textToolCall;
-
-    if (hasToolCall) {
-      const toolMessages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] =
-        [
-          ...messages,
-          {
-            role: "assistant",
-            content: message.content,
-            tool_calls: toolCalls?.length ? toolCalls : undefined,
-          } as OpenAI.Chat.Completions.ChatCompletionAssistantMessageParam,
-        ];
-
-      if (toolCalls?.length) {
-        for (const tc of toolCalls) {
-          let args: Record<string, unknown> = {};
-          try {
-            args = JSON.parse(tc.function.arguments);
-          } catch {
-            args = {};
-          }
-          const result = await executeToolCall(tc.function.name, args);
-          toolMessages.push({
-            role: "tool",
-            tool_call_id: tc.id,
-            content: result,
-          } as OpenAI.Chat.Completions.ChatCompletionToolMessageParam);
+    if (toolCalls?.length) {
+      for (const tc of toolCalls) {
+        let args: Record<string, unknown> = {};
+        try {
+          args = JSON.parse(tc.function.arguments);
+        } catch {
+          args = {};
         }
-      }
-
-      if (textToolCall) {
-        const result = await executeToolCall(textToolCall.name, textToolCall.args);
+        const result = await executeToolCall(tc.function.name, args);
         toolMessages.push({
           role: "tool",
-          tool_call_id: `text_tool_${Date.now()}`,
+          tool_call_id: tc.id,
           content: result,
         } as OpenAI.Chat.Completions.ChatCompletionToolMessageParam);
       }
+    }
 
-      const finalResponse = await callLLM(provider, req.model, toolMessages, undefined);
-      if (!finalResponse) {
-        return mockResponse(req, "failed to call LLM for tool response");
-      }
+    if (textToolCall) {
+      const result = await executeToolCall(textToolCall.name, textToolCall.args);
+      toolMessages.push({
+        role: "tool",
+        tool_call_id: `text_tool_${Date.now()}`,
+        content: result,
+      } as OpenAI.Chat.Completions.ChatCompletionToolMessageParam);
+    }
 
-      return {
-        output: finalResponse.choices[0]?.message?.content || "",
-        tokensUsed:
-          (response.usage?.total_tokens || 0) +
-          (finalResponse.usage?.total_tokens || 0),
-        mocked: false,
-      };
+    const finalResponse = await callLLM(provider, model, toolMessages, undefined);
+    if (!finalResponse) {
+      return mockResponse(
+        { provider, model, systemPrompt, userInput },
+        "failed to call LLM for tool response",
+      );
+    }
+
+    const content = finalResponse.choices[0]?.message?.content?.trim() || "";
+    if (!content) {
+      return mockResponse(
+        { provider, model, systemPrompt, userInput },
+        "empty tool-followup response",
+      );
     }
 
     return {
-      output: message.content || "",
-      tokensUsed: response.usage?.total_tokens,
+      output: content,
+      tokensUsed:
+        (response.usage?.total_tokens || 0) + (finalResponse.usage?.total_tokens || 0),
       mocked: false,
     };
+  }
+
+  const content = message.content?.trim() || "";
+  if (!content) {
+    return mockResponse({ provider, model, systemPrompt, userInput }, "empty LLM content");
+  }
+
+  return {
+    output: content,
+    tokensUsed: response.usage?.total_tokens,
+    mocked: false,
+  };
+}
+
+export async function executeLLM(req: LLMRequest): Promise<LLMResponse> {
+  const primary = resolveProvider(req.provider);
+
+  try {
+    const first = await runOnce(primary, req.model, req.systemPrompt, req.userInput);
+    if (!first.mocked) return first;
+
+    // Primary failed (credits / key / upstream). Fall back to Cloudflare tool model when available.
+    if (primary !== "cloudflare" && getCloudflareCredentials()) {
+      try {
+        const fallback = await runOnce(
+          "cloudflare",
+          CF_FALLBACK_MODEL,
+          req.systemPrompt,
+          req.userInput,
+        );
+        if (!fallback.mocked) {
+          return {
+            ...fallback,
+            output: `${fallback.output}\n\n---\n_Routed via Cloudflare fallback after ${primary} failure._`,
+          };
+        }
+      } catch {
+        /* keep primary mock */
+      }
+    }
+
+    return first;
   } catch (e: unknown) {
     const errorMsg = e instanceof Error ? e.message : "unknown upstream error";
+
+    if (primary !== "cloudflare" && getCloudflareCredentials()) {
+      try {
+        const fallback = await runOnce(
+          "cloudflare",
+          CF_FALLBACK_MODEL,
+          req.systemPrompt,
+          req.userInput,
+        );
+        if (!fallback.mocked) {
+          return {
+            ...fallback,
+            output: `${fallback.output}\n\n---\n_Routed via Cloudflare fallback after ${primary} error: ${errorMsg}_`,
+          };
+        }
+      } catch {
+        /* fall through */
+      }
+    }
+
     return mockResponse(req, `LLM provider error (${errorMsg})`);
   }
 }

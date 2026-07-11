@@ -96,13 +96,18 @@ export default async function Home() {
               multi-provider LLM are live; on-chain fee settlement is next.
             </p>
             <div className="mt-8 flex animate-fade-up flex-wrap gap-3 [animation-delay:180ms]">
-              <Link href="/skills/rug-risk-scanner">
-                <Button variant="accent" size="lg" trailingIcon={<ArrowRight size={18} />}>
-                  Open rug scanner
-                </Button>
+              <Link
+                href="/skills/rug-risk-scanner"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-md border border-accent bg-accent px-6 text-body font-semibold text-accent-text shadow-sm transition-[opacity,transform] duration-200 hover:bg-accent-hover active:scale-[0.98]"
+              >
+                Open rug scanner
+                <ArrowRight size={18} />
               </Link>
-              <Link href="/skills">
-                <Button variant="secondary" size="lg">Browse skills</Button>
+              <Link
+                href="/skills"
+                className="inline-flex h-12 items-center justify-center rounded-md border border-border-strong bg-transparent px-6 text-body font-semibold text-text-primary transition-colors hover:bg-bg-hover"
+              >
+                Browse skills
               </Link>
             </div>
             <dl className="mt-12 grid animate-fade-up grid-cols-3 gap-px overflow-hidden rounded-lg border border-border bg-border [animation-delay:240ms]">

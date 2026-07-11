@@ -1,11 +1,19 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { ensureCatalogPack } from "@/lib/catalogPack";
 import { PUBLIC_SKILL_SELECT } from "@/lib/skillsPublic";
 
 export async function GET(_request: Request, { params }: { params: { slug: string } }) {
   try {
     if (!params.slug || params.slug.length > 120) {
       return NextResponse.json({ error: "Invalid slug" }, { status: 400 });
+    }
+
+    // Keep curated skills (e.g. rug-risk-scanner provider) in sync on detail views too.
+    try {
+      await ensureCatalogPack();
+    } catch (e) {
+      console.error("[api/skills/slug] catalog ensure failed", e instanceof Error ? e.message : e);
     }
 
     const skill = await prisma.skill.findUnique({

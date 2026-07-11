@@ -31,8 +31,9 @@ export const catalogPack202607 = [
     category: "DeFi",
     fee: 0.6,
     runs: 0,
-    provider: "Grok",
-    model: "grok-4-1-fast-reasoning",
+    // Cloudflare tool-capable model (Grok team credits may be empty in prod).
+    provider: "Cloudflare",
+    model: "@cf/meta/llama-4-scout-17b-16e-instruct",
     description:
       "Heuristic rug / risk scan for an SPL mint: mint authority, liquidity, volume, and market structure via on-chain + DexScreener data.",
     builderWallet: CATALOG_BUILDER,
