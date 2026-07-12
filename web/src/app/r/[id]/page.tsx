@@ -115,10 +115,27 @@ export default async function ReceiptPage({ params }: Props) {
             </Badge>
           )}
           <Badge tone={succeeded ? (mocked ? "warning" : "success") : "danger"} mono>
-            {exec.status}
+            {mocked ? "mock" : exec.status}
           </Badge>
+          {!mocked && succeeded && (
+            <Badge tone="success" mono>
+              Live LLM
+            </Badge>
+          )}
         </div>
         <h1 className="text-h1">{exec.skill.name}</h1>
+        {mocked && (
+          <div
+            className="rounded-md border-2 border-warning/60 bg-warning-subtle px-3 py-3 text-small text-warning"
+            role="status"
+          >
+            <p className="font-semibold">Mock receipt — not a live LLM run</p>
+            <p className="mt-1 text-warning/90">
+              This output was a fallback (missing keys, credits, or provider error). Do not treat scores or verdicts as a
+              real desk brief.
+            </p>
+          </div>
+        )}
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 font-mono text-small text-text-tertiary">
           <span className="inline-flex items-center gap-1.5">
             <ReceiptIcon size={13} />
@@ -201,14 +218,22 @@ export default async function ReceiptPage({ params }: Props) {
         <section className="space-y-3">
           <h2 className="font-mono text-tiny uppercase tracking-[0.16em] text-text-tertiary">Full output</h2>
           {mocked && (
-            <div className="rounded-md border border-warning/40 bg-warning-subtle px-3 py-2 text-small text-warning" role="status">
-              Mock response — live LLM keys were not used for this run.
+            <div className="rounded-md border-2 border-warning/60 bg-warning-subtle px-3 py-2 text-small text-warning" role="status">
+              Mock output below — live LLM was not used for this run.
+            </div>
+          )}
+          {!mocked && succeeded && (
+            <div className="rounded-md border border-success/40 bg-success-subtle/40 px-3 py-2 text-small text-text-secondary" role="status">
+              <span className="font-medium text-success">Live LLM</span>
+              {live ? " · skill may have used chain/market tools" : " · prompt-only skill"} · not financial advice
             </div>
           )}
           <pre
             className={`max-h-[70vh] overflow-auto whitespace-pre-wrap rounded-lg border p-4 font-mono text-small ${
               succeeded
-                ? "border-border bg-bg-subtle text-text-primary"
+                ? mocked
+                  ? "border-warning/40 bg-warning-subtle/20 text-text-primary"
+                  : "border-border bg-bg-subtle text-text-primary"
                 : "border-danger/40 bg-danger-subtle text-danger"
             }`}
           >

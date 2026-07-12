@@ -29,6 +29,42 @@ function isLiveData(tags?: string) {
 const CATEGORIES = ['DeFi', 'Trading', 'Writing', 'Code', 'Research', 'Utility'];
 const PROVIDERS = ['Cloudflare', 'Groq', 'Google', 'Grok'];
 
+function SkillCard({ skill }: { skill: Skill }) {
+  return (
+    <Link
+      href={`/skills/${skill.slug}`}
+      className="group rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary"
+    >
+      <article className="lift flex h-full flex-col rounded-lg border border-border bg-bg-subtle p-5 hover:border-border-focused hover:shadow-md">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Badge tone="accent" mono>{skill.category}</Badge>
+            {isLiveData(skill.tags) && <Badge tone="success" mono>Live data</Badge>}
+          </div>
+          <span className="shrink-0 font-mono text-small font-semibold text-text-primary" title="Listed only — not charged">
+            {Number(skill.fee).toLocaleString(undefined, { maximumFractionDigits: 2 })} $SKRN
+            <span className="ml-1 text-mono-sm font-normal text-text-tertiary">listed</span>
+          </span>
+        </div>
+        <h2 className="mt-3 flex items-center gap-1.5 font-semibold text-text-primary">
+          {skill.name}
+          <ArrowRight size={15} className="text-text-tertiary opacity-0 transition-all duration-200 ease-out-expo group-hover:translate-x-0.5 group-hover:opacity-100 group-hover:text-accent" />
+        </h2>
+        <p className="mt-1.5 line-clamp-2 text-small text-text-secondary">{skill.description}</p>
+        <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
+          <span className="font-mono text-mono-sm text-text-tertiary">
+            {skill.builderWallet.slice(0, 4)}…{skill.builderWallet.slice(-4)}
+          </span>
+          <span className="flex items-center gap-1.5 font-mono text-mono-sm text-text-secondary">
+            <RunIcon size={12} />
+            {skill.runs.toLocaleString()} runs
+          </span>
+        </div>
+      </article>
+    </Link>
+  );
+}
+
 export default function SkillsPage() {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,6 +73,7 @@ export default function SkillsPage() {
   const [selectedProviders, setSelectedProviders] = useState<string[]>([]);
   const [feeMin, setFeeMin] = useState('');
   const [feeMax, setFeeMax] = useState('');
+  const [liveDataOnly, setLiveDataOnly] = useState(false);
   const [sort, setSort] = useState('popular');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [loadError, setLoadError] = useState('');
@@ -69,10 +106,17 @@ export default function SkillsPage() {
     setSelectedProviders([]);
     setFeeMin('');
     setFeeMax('');
+    setLiveDataOnly(false);
   };
+
+  const liveSkills = useMemo(
+    () => skills.filter((s) => isLiveData(s.tags)).sort((a, b) => b.runs - a.runs),
+    [skills],
+  );
 
   const filtered = useMemo(() => {
     const result = skills.filter((s) => {
+      if (liveDataOnly && !isLiveData(s.tags)) return false;
       if (search && !s.name.toLowerCase().includes(search.toLowerCase())) return false;
       if (selectedCategories.length && !selectedCategories.includes(s.category)) return false;
       if (selectedProviders.length && !selectedProviders.includes(s.provider)) return false;
@@ -87,10 +131,29 @@ export default function SkillsPage() {
     else if (sort === 'fee-high') result.sort((a, b) => liveFirst(a, b) || b.fee - a.fee);
     else if (sort === 'newest') result.sort((a, b) => liveFirst(a, b) || a.slug.localeCompare(b.slug));
     return result;
-  }, [skills, search, selectedCategories, selectedProviders, feeMin, feeMax, sort]);
+  }, [skills, search, selectedCategories, selectedProviders, feeMin, feeMax, sort, liveDataOnly]);
 
   const categoryCounts = CATEGORIES.map((cat) => ({ cat, count: skills.filter((s) => s.category === cat).length }));
-  const activeFilterCount = selectedCategories.length + selectedProviders.length + (feeMin ? 1 : 0) + (feeMax ? 1 : 0) + (search ? 1 : 0);
+  const liveCount = skills.filter((s) => isLiveData(s.tags)).length;
+  const activeFilterCount =
+    selectedCategories.length +
+    selectedProviders.length +
+    (feeMin ? 1 : 0) +
+    (feeMax ? 1 : 0) +
+    (search ? 1 : 0) +
+    (liveDataOnly ? 1 : 0);
+
+  // Hide featured strip when user is already filtering to live-only or searching/filtering heavily.
+  const showFeatured =
+    !loading &&
+    !loadError &&
+    liveSkills.length > 0 &&
+    !liveDataOnly &&
+    !search &&
+    selectedCategories.length === 0 &&
+    selectedProviders.length === 0 &&
+    !feeMin &&
+    !feeMax;
 
   const fieldCls =
     'w-full rounded-md border border-border bg-bg-primary px-3 py-2 text-small font-mono text-text-primary placeholder:text-text-tertiary focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40';
@@ -111,6 +174,25 @@ export default function SkillsPage() {
           />
         </div>
       </div>
+
+      <fieldset>
+        <legend className="mb-2.5 text-tiny font-semibold uppercase tracking-[0.14em] text-text-tertiary">Data type</legend>
+        <label className="flex cursor-pointer items-center gap-2.5 rounded-md border border-border bg-bg-primary px-3 py-2.5 text-small text-text-secondary transition-colors hover:border-border-focused hover:text-text-primary">
+          <input
+            type="checkbox"
+            checked={liveDataOnly}
+            onChange={(e) => setLiveDataOnly(e.target.checked)}
+            className="h-4 w-4 rounded accent-accent"
+          />
+          <span className="flex-1">
+            Live data only
+            <span className="mt-0.5 block text-mono-sm font-normal text-text-tertiary">
+              Chain + market tools (not chat wrappers)
+            </span>
+          </span>
+          <span className="font-mono text-mono-sm text-success">{liveCount}</span>
+        </label>
+      </fieldset>
 
       <fieldset>
         <legend className="mb-2.5 text-tiny font-semibold uppercase tracking-[0.14em] text-text-tertiary">Category</legend>
@@ -178,7 +260,62 @@ export default function SkillsPage() {
           Off-chain registry today. Prefer <span className="text-success">Live data</span> skills that call chain and
           market APIs. Free trial (rate-limited). Fees are listed only — not charged yet. Not financial advice.
         </p>
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setLiveDataOnly((v) => !v)}
+            className={cn(
+              'inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-small font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40',
+              liveDataOnly
+                ? 'border-success/50 bg-success-subtle text-success'
+                : 'border-border bg-bg-subtle text-text-secondary hover:border-border-focused hover:text-text-primary',
+            )}
+            aria-pressed={liveDataOnly}
+          >
+            <span
+              className={cn('h-2 w-2 rounded-full', liveDataOnly ? 'bg-success' : 'bg-text-tertiary')}
+              aria-hidden
+            />
+            Live data only
+            <span className="font-mono text-mono-sm opacity-80">{liveCount}</span>
+          </button>
+          <Link
+            href="/docs/free-trial-and-live-data"
+            className="text-small text-text-tertiary underline-offset-2 hover:text-accent hover:underline"
+          >
+            What does Live data mean?
+          </Link>
+        </div>
       </div>
+
+      {/* Featured: tool-using skills only */}
+      {showFeatured && (
+        <section className="mb-10" aria-labelledby="featured-live-heading">
+          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="font-mono text-tiny uppercase tracking-[0.16em] text-success">Featured desk</p>
+              <h2 id="featured-live-heading" className="mt-1 text-h3 text-text-primary">
+                Live data skills
+              </h2>
+              <p className="mt-1 max-w-prose text-small text-text-secondary">
+                These skills can call Solana RPC + market APIs (mint info, balances, DexScreener). Not generic chat wrappers.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setLiveDataOnly(true)}
+              className="text-small font-medium text-accent underline-offset-2 hover:underline"
+            >
+              View all live data →
+            </button>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {liveSkills.slice(0, 6).map((skill) => (
+              <SkillCard key={`featured-${skill.slug}`} skill={skill} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Mobile filter toggle */}
       <div className="mb-4 md:hidden">
@@ -209,7 +346,11 @@ export default function SkillsPage() {
           <div className="mb-5 flex items-center justify-between gap-4">
             <p className="text-small text-text-secondary">
               {loading ? 'Loading…' : (
-                <><span className="font-mono font-semibold text-text-primary">{filtered.length}</span> skill{filtered.length !== 1 ? 's' : ''}</>
+                <>
+                  <span className="font-mono font-semibold text-text-primary">{filtered.length}</span>
+                  {' '}skill{filtered.length !== 1 ? 's' : ''}
+                  {liveDataOnly && <span className="text-success"> · live data</span>}
+                </>
               )}
             </p>
             <div className="flex items-center gap-2">
@@ -256,45 +397,18 @@ export default function SkillsPage() {
           ) : filtered.length === 0 ? (
             <EmptyState
               title="No skills match your filters"
-              description="Try widening your fee range or clearing a category to see more of the registry."
+              description={
+                liveDataOnly
+                  ? 'No Live data skills match. Clear the Live data filter or widen other filters.'
+                  : 'Try widening your fee range or clearing a category to see more of the registry.'
+              }
               art={<LottiePlayer name="empty-registry" className="h-40 w-40" ariaLabel="No matching skills" />}
               action={<Button variant="secondary" onClick={clearFilters}>Clear filters</Button>}
             />
           ) : (
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
               {filtered.map((skill) => (
-                <Link
-                  key={skill.slug}
-                  href={`/skills/${skill.slug}`}
-                  className="group rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary"
-                >
-                  <article className="lift flex h-full flex-col rounded-lg border border-border bg-bg-subtle p-5 hover:border-border-focused hover:shadow-md">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        <Badge tone="accent" mono>{skill.category}</Badge>
-                        {isLiveData(skill.tags) && <Badge tone="success" mono>Live data</Badge>}
-                      </div>
-                      <span className="shrink-0 font-mono text-small font-semibold text-text-primary" title="Listed only — not charged">
-                        {Number(skill.fee).toLocaleString(undefined, { maximumFractionDigits: 2 })} $SKRN
-                        <span className="ml-1 text-mono-sm font-normal text-text-tertiary">listed</span>
-                      </span>
-                    </div>
-                    <h2 className="mt-3 flex items-center gap-1.5 font-semibold text-text-primary">
-                      {skill.name}
-                      <ArrowRight size={15} className="text-text-tertiary opacity-0 transition-all duration-200 ease-out-expo group-hover:translate-x-0.5 group-hover:opacity-100 group-hover:text-accent" />
-                    </h2>
-                    <p className="mt-1.5 line-clamp-2 text-small text-text-secondary">{skill.description}</p>
-                    <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
-                      <span className="font-mono text-mono-sm text-text-tertiary">
-                        {skill.builderWallet.slice(0, 4)}…{skill.builderWallet.slice(-4)}
-                      </span>
-                      <span className="flex items-center gap-1.5 font-mono text-mono-sm text-text-secondary">
-                        <RunIcon size={12} />
-                        {skill.runs.toLocaleString()} runs
-                      </span>
-                    </div>
-                  </article>
-                </Link>
+                <SkillCard key={skill.slug} skill={skill} />
               ))}
             </div>
           )}

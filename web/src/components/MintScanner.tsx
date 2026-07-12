@@ -186,12 +186,32 @@ export default function MintScanner() {
               )}
             </div>
           )}
-          {mocked && (
-            <div className="rounded-md border border-warning/40 bg-warning-subtle px-3 py-2 text-small text-warning" role="status">
-              Mock response — configure LLM API keys for live scans.
+          {mocked ? (
+            <div
+              className="rounded-md border-2 border-warning/60 bg-warning-subtle px-3 py-3 text-small text-warning"
+              role="status"
+            >
+              <p className="font-semibold">Mock — not a live LLM scan</p>
+              <p className="mt-1 text-warning/90">
+                Fallback output. Provider keys missing, out of credits, or the call failed. Do not use this for trading
+                decisions. Configure LLM API keys for live desk briefs.
+              </p>
+            </div>
+          ) : (
+            <div
+              className="rounded-md border border-success/40 bg-success-subtle/40 px-3 py-2 text-small text-text-secondary"
+              role="status"
+            >
+              <span className="font-medium text-success">Live LLM</span>
+              {guest ? " · guest trial (5 runs/hour/IP)" : " · wallet identity only"}
+              {" · "}tools may have hit chain/market APIs · not financial advice
             </div>
           )}
-          <pre className="max-h-80 overflow-auto whitespace-pre-wrap rounded-lg border border-border bg-bg-primary p-4 font-mono text-small text-text-primary">
+          <pre
+            className={`max-h-80 overflow-auto whitespace-pre-wrap rounded-lg border p-4 font-mono text-small text-text-primary ${
+              mocked ? "border-warning/40 bg-warning-subtle/20" : "border-border bg-bg-primary"
+            }`}
+          >
             {result}
           </pre>
         </div>

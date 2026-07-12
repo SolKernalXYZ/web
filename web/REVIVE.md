@@ -34,8 +34,8 @@ Night     → log what shipped + metric note below
 - [x] Skill detail: **Run free trial** without wallet + receipt share
 
 ### Push / Deploy
-- [ ] `git add` → commit Day 1 → push `main` (or PR)  ← **you/agent next**
-- [ ] Confirm Vercel production green
+- [x] `git add` → commit Day 1+2 → push `main` (`935362d`)
+- [x] Confirm Vercel production green (`vercel --prod` → solkernal.xyz)
 - [ ] Smoke: home scanner → result → open `/r/...` receipt
 - [x] `npm run build` green locally
 
@@ -67,7 +67,8 @@ Stranger lands on home, pastes a mint, gets output + shareable receipt URL.
 - [x] Day 1 QA: steps no longer force “connect wallet first”
 
 ### Push / Deploy
-- [ ] Ship before EOD  ← **next: commit + push**
+- [x] Ship (same commit as Day 1 — `935362d` on `main`)
+- [x] Vercel prod deploy live
 - [ ] Smoke: share receipt on mobile preview / X card
 - [x] `npm run build` green locally
 
@@ -91,15 +92,16 @@ You post one real receipt URL from a trending mint.
 **Theme:** Marketplace feels like a desk, not ChatGPT wrappers.
 
 ### Build
-- [ ] Featured row on `/skills`: only tool-using skills
-- [ ] Skill cards: “Live data” filter toggle
-- [ ] Improve rug-risk-scanner + wallet-health-checker prompts/tools if weak
-- [ ] Ensure mock vs live is unmistakable in UI
-- [ ] Docs page: “How free trial works” + “What Live data means”
+- [x] Featured row on `/skills`: only tool-using skills
+- [x] Skill cards: “Live data” filter toggle
+- [x] Improve rug-risk-scanner + wallet-health-checker prompts/tools if weak
+- [x] Ensure mock vs live is unmistakable in UI
+- [x] Docs page: “How free trial works” + “What Live data means”
 
 ### Push / Deploy
 - [ ] Deploy
 - [ ] Smoke all featured skills with real mints/wallets
+- [x] `npm run build` green locally
 
 ### Tweet
 ```
@@ -283,6 +285,14 @@ Thread is up + this file’s Week 1 metrics filled.
 - Mint scanner + skill detail share hooks
 - Homepage how-it-works / features aligned to free trial
 - **Next:** push Day 1+2 → deploy → tweet with a real `/r/` URL
+
+### 2026-07-12 — Day 3 code
+- Featured desk row on `/skills` (tools-tagged skills only)
+- Live data only filter (header chip + sidebar) + docs link
+- Stronger rug-risk-scanner + wallet-health-checker system prompts (workflow, rubric, parseable headers)
+- Mock vs Live LLM banners on skill detail, mint scanner, receipts (warning border for mock)
+- Docs: `/docs/free-trial-and-live-data` (trial limits, Live data meaning, mock vs live)
+- **Next:** push → deploy → smoke featured skills → tweet Day 3 copy
 
 ---
 

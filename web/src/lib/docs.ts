@@ -26,7 +26,7 @@ export type DocPage = {
 export const docNav = [
   {
     title: "Get started",
-    pages: ["introduction", "quickstart", "authentication"],
+    pages: ["introduction", "quickstart", "free-trial-and-live-data", "authentication"],
   },
   {
     title: "Core concepts",
@@ -57,8 +57,8 @@ export const docs: DocPage[] = [
     description:
       "SolKernal is a web marketplace for Solana-oriented AI skills. Payments, staking, and on-chain registry are planned — not live yet.",
     category: "Get started",
-    updated: "July 11, 2026",
-    related: ["quickstart", "how-solkernal-works"],
+    updated: "July 12, 2026",
+    related: ["quickstart", "free-trial-and-live-data", "how-solkernal-works"],
     sections: [
       {
         id: "what-is-solkernal",
@@ -127,6 +127,7 @@ export const docs: DocPage[] = [
             type: "ul",
             items: [
               "Use Quickstart to run the app locally and seed the first skills.",
+              "Read Free trial & Live data for guest limits, mock vs live, and the desk wedge.",
               "Read How SolKernal works for the end-to-end execution lifecycle.",
               "Open API overview when wiring an external client or agent.",
               "Use Production checklist before mainnet or public beta deployment.",
@@ -198,6 +199,113 @@ export const docs: DocPage[] = [
             title: "Safe local fallback",
             text: "If provider credentials are missing or the upstream LLM call fails, execution returns a clearly labeled mock result. This keeps local development deterministic and avoids broken demo flows.",
             tone: "success",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "free-trial-and-live-data",
+    title: "Free trial & Live data",
+    description:
+      "How free guest runs work, what Live data skills mean, and how mock vs live LLM responses are labeled.",
+    category: "Get started",
+    updated: "July 12, 2026",
+    related: ["quickstart", "execute-a-skill", "skills", "execution-receipts"],
+    sections: [
+      {
+        id: "free-trial",
+        title: "How free trial works",
+        blocks: [
+          {
+            type: "p",
+            text: "Anyone can run skills without connecting a wallet. Guest runs are rate-limited so the desk stays usable and abuse stays bounded.",
+          },
+          {
+            type: "table",
+            headers: ["Rule", "Today"],
+            rows: [
+              ["Wallet required?", "No for free trial. Wallet is optional identity only."],
+              ["Guest quota", "5 runs per hour per IP (server rate limit)."],
+              ["Payment charged?", "No. Listed $SKRN fees are display-only until settlement ships."],
+              ["Receipt", "Each successful (or mock) run can create a public /r/[id] receipt you can share."],
+              ["Homepage scanner", "Paste an SPL mint on the home page — routes to Rug Risk Scanner free trial."],
+            ],
+          },
+          {
+            type: "callout",
+            title: "Not a paid product yet",
+            text: "On-chain fee payment, builder payouts, and staking rewards are not live. Do not expect $SKRN to be charged or distributed on execute.",
+            tone: "warning",
+          },
+          {
+            type: "ol",
+            items: [
+              "Open a Live data skill (or use the homepage mint scanner).",
+              "Paste a mint, wallet, or other input — no wallet connect required.",
+              "Run free trial and wait for tools + model (or a labeled mock fallback).",
+              "Open the public receipt link and share if useful.",
+            ],
+          },
+        ],
+      },
+      {
+        id: "live-data",
+        title: "What Live data means",
+        blocks: [
+          {
+            type: "p",
+            text: "A skill is marked Live data when it is tagged with tools. Those skills are allowed to call server-side Solana and market tools (RPC mint/wallet reads, DexScreener, optional web search) during execution.",
+          },
+          {
+            type: "ul",
+            items: [
+              "Live data ≠ guaranteed accurate. Tools depend on RPC, public APIs, and rate limits.",
+              "Live data ≠ live LLM. You can have tool-capable skills that still fall back to a mock if LLM keys fail.",
+              "Prompt-only skills have no tools tag — pure LLM/copy skills (e.g. thread packs, IDL docs).",
+              "Marketplace Featured desk and the Live data only filter surface tools-tagged skills first.",
+            ],
+          },
+          {
+            type: "table",
+            headers: ["Label", "Meaning"],
+            rows: [
+              ["Live data badge", "Skill may call chain/market tools (tags include tools)."],
+              ["Prompt only", "No tools tag — model-only output."],
+              ["Live LLM", "A real provider returned content (not the mock fallback)."],
+              ["Mock", "No live LLM call — missing keys, credits, or provider error. Labeled in UI and receipts."],
+            ],
+          },
+          {
+            type: "callout",
+            title: "Wedge",
+            text: "SolKernal prioritizes Solana decision tools (rug scanner, wallet health, tx explainer, token brief) over generic chat wrappers.",
+            tone: "accent",
+          },
+        ],
+      },
+      {
+        id: "mock-vs-live",
+        title: "Mock vs live (unmistakable)",
+        blocks: [
+          {
+            type: "p",
+            text: "When a configured LLM provider cannot run, SolKernal returns a clearly labeled mock response so demos never fail silently. Mock is never presented as a successful live desk brief.",
+          },
+          {
+            type: "ul",
+            items: [
+              "Mock banners use warning color and the word Mock on skill detail, mint scanner, and receipts.",
+              "Live runs show a Live LLM status (and Live data tools when applicable).",
+              "Receipt status mock is stored on the execution row for public audit of the run type.",
+              "Never trade or ape based on mock output.",
+            ],
+          },
+          {
+            type: "callout",
+            title: "Not financial advice",
+            text: "Risk scores and verdicts are heuristic model output over tool snapshots. Always verify on explorers and do your own research.",
+            tone: "warning",
           },
         ],
       },
@@ -431,8 +539,8 @@ export const docs: DocPage[] = [
     title: "Execute a skill",
     description: "Run any active skill from the marketplace, skill detail page, or API.",
     category: "Guides",
-    updated: "July 2, 2026",
-    related: ["execution-api", "execution-receipts"],
+    updated: "July 12, 2026",
+    related: ["free-trial-and-live-data", "execution-api", "execution-receipts"],
     sections: [
       {
         id: "web-flow",
@@ -441,11 +549,11 @@ export const docs: DocPage[] = [
           {
             type: "ol",
             items: [
-              "Open the Skills marketplace and select a skill.",
-              "Connect a wallet so the execution can be attributed to a public address.",
+              "Open the Skills marketplace and prefer a Live data skill (or use the homepage mint scanner).",
+              "Optionally connect a wallet for identity — free trial works without it.",
               "Enter the main input and optional context.",
-              "Review the fee and execute the skill.",
-              "Read the result and inspect recent executions or receipt metadata.",
+              "Run free trial. Listed fees are not charged yet.",
+              "Check Mock vs Live LLM labels, then open the public receipt if you want to share.",
             ],
           },
         ],

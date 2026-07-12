@@ -225,9 +225,13 @@ export default function SkillDetailPage() {
         <div className="w-full space-y-8 lg:w-[60%]">
           <header className="space-y-4">
             <div className="flex flex-wrap gap-1.5">
-              {liveData && (
+              {liveData ? (
                 <Badge tone="success" mono>
                   Live data
+                </Badge>
+              ) : (
+                <Badge tone="outline" mono>
+                  Prompt only
                 </Badge>
               )}
               {tags
@@ -239,6 +243,23 @@ export default function SkillDetailPage() {
                 ))}
             </div>
             <h1 className="text-h1">{skill.name}</h1>
+            {liveData ? (
+              <p className="max-w-prose text-small text-text-secondary">
+                This skill can call Solana RPC + market tools (mint, balances, prices). Output quality depends on tools +
+                model.{" "}
+                <Link href="/docs/free-trial-and-live-data" className="text-accent underline-offset-2 hover:underline">
+                  How free trial & Live data work
+                </Link>
+              </p>
+            ) : (
+              <p className="max-w-prose text-small text-text-secondary">
+                Prompt-only skill — no live chain tools. Prefer{" "}
+                <Link href="/skills" className="text-success underline-offset-2 hover:underline">
+                  Live data
+                </Link>{" "}
+                skills for mint/wallet desk work.
+              </p>
+            )}
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 font-mono text-small text-text-tertiary">
               <span className="text-text-secondary">by {shortBuilder}</span>
               <span className="inline-flex items-center gap-1.5">
@@ -313,29 +334,62 @@ export default function SkillDetailPage() {
                 </div>
               </div>
               {mocked && succeeded && (
-                <div className="mb-2.5 rounded-md border border-warning/40 bg-warning-subtle px-3 py-2 text-small text-warning" role="status">
-                  Mock / fallback response — primary LLM may be out of credits. Output still shown below.
+                <div
+                  className="mb-2.5 rounded-md border-2 border-warning/60 bg-warning-subtle px-3 py-3 text-small text-warning"
+                  role="status"
+                >
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge tone="warning" mono>
+                      Mock
+                    </Badge>
+                    <span className="font-semibold">Not a live LLM run</span>
+                  </div>
+                  <p className="mt-1.5 text-warning/90">
+                    Fallback output — provider keys missing, out of credits, or the call failed. Do not treat this as a
+                    real desk brief. Configure LLM keys for live scans.
+                  </p>
                 </div>
               )}
               {!mocked && succeeded && (
-                <div className="mb-2.5 rounded-md border border-border bg-bg-subtle px-3 py-2 text-small text-text-secondary" role="status">
-                  {guest
-                    ? "Guest trial — no wallet required. Rate limited to 5 runs/hour per IP."
-                    : "Wallet used for identity only. On-chain fee settlement not enforced yet."}
-                  {sharePath && (
-                    <>
-                      {" "}
-                      <Link href={sharePath} className="font-medium text-accent underline-offset-2 hover:underline">
-                        Open public receipt →
-                      </Link>
-                    </>
-                  )}
+                <div
+                  className="mb-2.5 rounded-md border border-success/40 bg-success-subtle/40 px-3 py-3 text-small text-text-secondary"
+                  role="status"
+                >
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge tone="success" mono>
+                      Live LLM
+                    </Badge>
+                    {liveData && (
+                      <Badge tone="success" mono>
+                        Live data tools
+                      </Badge>
+                    )}
+                    <span className="font-medium text-text-primary">Real model response</span>
+                  </div>
+                  <p className="mt-1.5">
+                    {guest
+                      ? "Guest trial — no wallet required. Rate limited to 5 runs/hour per IP."
+                      : "Wallet used for identity only. On-chain fee settlement not enforced yet."}
+                    {liveData
+                      ? " This skill may have called chain/market tools; tool data quality depends on RPC and APIs."
+                      : " This skill is prompt-only (no live chain tools)."}
+                    {sharePath && (
+                      <>
+                        {" "}
+                        <Link href={sharePath} className="font-medium text-accent underline-offset-2 hover:underline">
+                          Open public receipt →
+                        </Link>
+                      </>
+                    )}
+                  </p>
                 </div>
               )}
               <pre
                 className={`overflow-x-auto whitespace-pre-wrap rounded-lg border p-4 font-mono text-small ${
                   succeeded
-                    ? "border-border bg-bg-subtle text-text-primary"
+                    ? mocked
+                      ? "border-warning/40 bg-warning-subtle/20 text-text-primary"
+                      : "border-border bg-bg-subtle text-text-primary"
                     : "border-danger/40 bg-danger-subtle text-danger"
                 }`}
               >
