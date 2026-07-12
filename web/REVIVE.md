@@ -99,7 +99,8 @@ You post one real receipt URL from a trending mint.
 - [x] Docs page: “How free trial works” + “What Live data means”
 
 ### Push / Deploy
-- [ ] Deploy
+- [x] Push `main` → `SolKernalXYZ/web` (`282fa70`)
+- [x] Deploy prod via `vercel --prod` → https://solkernal.xyz
 - [ ] Smoke all featured skills with real mints/wallets
 - [x] `npm run build` green locally
 
