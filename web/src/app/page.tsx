@@ -32,7 +32,7 @@ const steps = [
   { n: '01', title: 'Paste a mint (or wallet)', desc: 'Use the homepage scanner or a Live data skill. Free trial does not require a wallet.' },
   { n: '02', title: 'Tools + LLM run', desc: 'Where enabled, the skill may call chain/market tools, then the model formats a brief.' },
   { n: '03', title: 'Read the output', desc: 'Risk highlights when the model includes them. Mock vs live is labeled. Not financial advice.' },
-  { n: '04', title: 'Share the receipt', desc: 'Optional public /r/ link. Fee payment and on-chain proofs are not enforced yet.' },
+  { n: '04', title: 'Share the receipt', desc: 'Optional public /r/ link. SOL pay-per-run after free quota is optional on the rug scanner; $SKRN fee splits are not live.' },
 ];
 
 const tiers = [
@@ -200,7 +200,7 @@ export default async function Home() {
               <Badgeish tone="accent">What ships today</Badgeish>
               <div className="mt-4 space-y-3 text-body text-text-secondary">
                 <p>A web marketplace of AI skills, multi-provider LLM routing, optional live tools (mint, wallet, market), free guest trial, and public run receipts in our database.</p>
-                <p>Not live yet: wallet payment enforcement, $SKRN fee splits, staking vaults, Blinks, or on-chain skill registry. Those are roadmap items, not current features.</p>
+                <p>Optional SOL pay-per-run after free quota is prototyped on the Rug Risk Scanner only (when treasury is set). Not live: $SKRN fee splits, staking vaults, Blinks, or on-chain skill registry.</p>
               </div>
             </div>
           </Reveal>

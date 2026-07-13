@@ -20,6 +20,9 @@ export default function MintScanner() {
   const [mocked, setMocked] = useState(false);
   const [guest, setGuest] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [freeRemaining, setFreeRemaining] = useState<number | null>(null);
+  const [paymentRequired, setPaymentRequired] = useState(false);
+  const [paySol, setPaySol] = useState(0.001);
 
   const run = async () => {
     const value = mint.trim();
@@ -37,6 +40,7 @@ export default function MintScanner() {
     setResult("");
     setSharePath("");
     setMocked(false);
+    setPaymentRequired(false);
 
     try {
       const body: { slug: string; input: string; walletAddress?: string } = {
@@ -51,7 +55,15 @@ export default function MintScanner() {
         body: JSON.stringify(body),
       });
       const data = await res.json();
+      if (typeof data.freeRemaining === "number") setFreeRemaining(data.freeRemaining);
+      if (typeof data.paySol === "number") setPaySol(data.paySol);
       if (!res.ok) {
+        if (res.status === 402 || data.paymentRequired) {
+          setPaymentRequired(true);
+          setFreeRemaining(0);
+          setError(data.error || "Free trial limit reached. Pay SOL on the full skill page to continue.");
+          return;
+        }
         setError(data.error || "Scan failed");
         return;
       }
@@ -139,12 +151,29 @@ export default function MintScanner() {
       </div>
 
       <p className="mt-2 text-mono-sm text-text-tertiary">
-        5 free guest runs / hour · wallet optional · not financial advice
+        5 free guest runs / hour
+        {freeRemaining !== null ? ` · ${freeRemaining} free left this window` : ""}
+        {" · "}wallet optional · not financial advice
       </p>
 
       {error && (
-        <div className="mt-4 rounded-md border border-danger/40 bg-danger-subtle px-3 py-2 text-small text-danger" role="alert">
-          {error}
+        <div
+          className={`mt-4 rounded-md border px-3 py-2 text-small ${
+            paymentRequired
+              ? "border-warning/50 bg-warning-subtle text-warning"
+              : "border-danger/40 bg-danger-subtle text-danger"
+          }`}
+          role="alert"
+        >
+          <p>{error}</p>
+          {paymentRequired && (
+            <Link
+              href={`/skills/${DEFAULT_SKILL}`}
+              className="mt-2 inline-flex font-medium underline-offset-2 hover:underline"
+            >
+              Pay {paySol} SOL &amp; run on full skill page →
+            </Link>
+          )}
         </div>
       )}
 

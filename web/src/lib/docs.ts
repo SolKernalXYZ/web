@@ -70,7 +70,7 @@ export const docs: DocPage[] = [
           },
           {
             type: "p",
-            text: "Live today: browse skills, free guest trial runs (rate-limited), multi-provider LLM routing, optional live tools, and app-database receipts. Not live: wallet payment enforcement, $SKRN fee payouts, staking vaults, Blinks, or on-chain skill accounts.",
+            text: "Live today: browse skills, free guest trial runs (rate-limited), multi-provider LLM routing, optional live tools, app-database receipts, and optional SOL pay-per-run after free quota on Rug Risk Scanner (when treasury is configured). Not live: $SKRN fee payouts, staking vaults, Blinks, or on-chain skill accounts.",
           },
           {
             type: "ul",
@@ -191,7 +191,7 @@ export const docs: DocPage[] = [
           {
             type: "callout",
             title: "Current status",
-            text: "The web marketplace and multi-provider LLM execution are live. On-chain fee settlement, Blinks, and staking vaults are not live yet. Execution uses wallet identity without charging $SKRN until settlement ships.",
+            text: "The web marketplace and multi-provider LLM execution are live. Optional SOL pay-per-run after free quota is prototyped on Rug Risk Scanner only. $SKRN fee settlement, Blinks, and staking vaults are not live yet.",
             tone: "warning",
           },
           {
@@ -227,15 +227,18 @@ export const docs: DocPage[] = [
             rows: [
               ["Wallet required?", "No for free trial. Wallet is optional identity only."],
               ["Guest quota", "5 runs per hour per IP (server rate limit)."],
-              ["Payment charged?", "No. Listed $SKRN fees are display-only until settlement ships."],
+              [
+                "Payment charged?",
+                "Free trial first. On rug-risk-scanner only: after free quota (or optionally anytime), a small SOL transfer to the protocol treasury can unlock another run when NEXT_PUBLIC_PROTOCOL_TREASURY is set. Listed $SKRN fees remain display-only — not paid out.",
+              ],
               ["Receipt", "Each successful (or mock) run can create a public /r/[id] receipt you can share."],
               ["Homepage scanner", "Paste an SPL mint on the home page — routes to Rug Risk Scanner free trial."],
             ],
           },
           {
             type: "callout",
-            title: "Not a paid product yet",
-            text: "On-chain fee payment, builder payouts, and staking rewards are not live. Do not expect $SKRN to be charged or distributed on execute.",
+            title: "SOL pay-per-run is a prototype on one skill",
+            text: "Only Rug Risk Scanner enforces an optional SOL transfer after free quota. Builder fee splits, $SKRN charges, and staking rewards are still not live. If treasury is not configured, the paid path stays off and free trial works as before.",
             tone: "warning",
           },
           {
@@ -1039,7 +1042,7 @@ export const docs: DocPage[] = [
           {
             type: "ul",
             items: [
-              "Pay-per-run in SOL/USDC after free quota (start with one flagship skill).",
+              "SOL pay-per-run prototype on rug-risk-scanner (expand to USDC + more skills).",
               "Builder fee payouts once settlement exists (split design is planned, not live).",
               "Solana Blinks / Actions for top skills.",
               "Telegram /scan bot for degen distribution.",

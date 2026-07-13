@@ -1,6 +1,6 @@
 # SolKernal Product Roadmap
 
-**Updated:** 2026-07-11  
+**Updated:** 2026-07-12  
 **Source of truth (code):** `src/lib/roadmap.ts`  
 **Public pages:** homepage `#roadmap` · [docs/roadmap](https://solkernal.xyz/docs/roadmap) · nav Roadmap menu  
 
@@ -40,7 +40,8 @@
 | Live-data tools | Mint, wallet, market tools when configured |
 | Public run receipts | `/r/[id]` + share + OG (app DB, not chain) |
 | Skill publish form | Listed fees **display-only** — not paid out |
-| Honest product claims | No fake stake TVL / yield; payments & stake clearly off |
+| Honest product claims | No fake stake TVL / yield; staking clearly off |
+| SOL pay-per-run (prototype) | After free quota on rug-risk-scanner; treasury env + on-chain verify |
 
 ---
 
@@ -61,7 +62,7 @@
 
 | Item | Detail |
 |------|--------|
-| Pay-per-run (SOL/USDC) | Enforce transfer after free quota; start with one skill |
+| Pay-per-run expansion (USDC + skills) | SOL prototype on rug scanner when treasury set; expand later |
 | Builder fee payouts | Attribute paid runs once settlement exists |
 | Solana Blinks / Actions | Top skills runnable from X / Action surfaces |
 | Telegram `/scan` bot | Mint scan without the full site |

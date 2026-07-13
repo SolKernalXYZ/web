@@ -36,6 +36,24 @@ export function rateLimit(key: string, limit: number, windowMs: number): RateLim
   return { allowed: true, remaining: limit - existing.count, resetAt: existing.resetAt, limit };
 }
 
+/** Read remaining quota without consuming a slot. */
+export function peekRateLimit(key: string, limit: number, windowMs: number): RateLimitResult {
+  const now = Date.now();
+  const existing = buckets.get(key);
+
+  if (!existing || now >= existing.resetAt) {
+    return { allowed: true, remaining: limit, resetAt: now + windowMs, limit };
+  }
+
+  const remaining = Math.max(0, limit - existing.count);
+  return {
+    allowed: remaining > 0,
+    remaining,
+    resetAt: existing.resetAt,
+    limit,
+  };
+}
+
 /** Periodically drop expired buckets so the map does not grow unbounded. */
 function sweep() {
   const now = Date.now();

@@ -22,7 +22,7 @@ export type RoadmapPhase = {
 };
 
 /** Last editorial refresh of this roadmap (ISO date). */
-export const ROADMAP_UPDATED = "2026-07-11";
+export const ROADMAP_UPDATED = "2026-07-12";
 
 export const ROADMAP_TAGLINE =
   "Sequenced by dependency, not hype. Shipped items are live on the web app. Everything else is planned until it ships.";
@@ -76,7 +76,12 @@ export const roadmapPhases: RoadmapPhase[] = [
       },
       {
         title: "Honest product claims",
-        detail: "No fake stake TVL, no fake yield, fees marked listed-only, payments/stake clearly not live.",
+        detail: "No fake stake TVL, no fake yield; $SKRN fees listed-only; staking not live.",
+      },
+      {
+        title: "SOL pay-per-run (prototype)",
+        detail:
+          "After free guest quota on rug-risk-scanner, optional SOL transfer to protocol treasury is verified on-chain before extra runs (when treasury env is set).",
       },
     ],
   },
@@ -119,8 +124,8 @@ export const roadmapPhases: RoadmapPhase[] = [
     summary: "Turn the desk into a business and meet users where they already are.",
     items: [
       {
-        title: "Pay-per-run (SOL/USDC)",
-        detail: "Enforce a real transfer before execute after free quota — start with one flagship skill.",
+        title: "Pay-per-run expansion (USDC + more skills)",
+        detail: "SOL pay-per-run prototype is live on rug-risk-scanner when treasury is set. Expand to USDC and more skills after usage.",
       },
       {
         title: "Builder fee payouts",

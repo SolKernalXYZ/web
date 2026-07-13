@@ -1,10 +1,16 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
+import {
+  PublicKey,
+  SystemProgram,
+  Transaction,
+  LAMPORTS_PER_SOL,
+} from "@solana/web3.js";
 import Button from "@/components/Button";
 import Badge from "@/components/Badge";
 import LottiePlayer from "@/components/lottie/LottiePlayer";
@@ -27,11 +33,26 @@ type Skill = {
   executions: { id: string; walletAddress: string; status: string; createdAt: string }[];
 };
 
+type PayInfo = {
+  paymentEnabled: boolean;
+  paymentRequired?: boolean;
+  treasury: string | null;
+  paySol: number;
+  payLamports: number;
+  freeRemaining?: number | null;
+  freeLimit?: number | null;
+  guestLimit?: boolean;
+  error?: string;
+};
+
+const PAYWALL_SLUG = "rug-risk-scanner";
+
 export default function SkillDetailPage() {
   const routeParams = useParams();
   const slug = typeof routeParams?.slug === "string" ? routeParams.slug : Array.isArray(routeParams?.slug) ? routeParams.slug[0] : "";
 
-  const { connected, publicKey } = useWallet();
+  const { connection } = useConnection();
+  const { connected, publicKey, sendTransaction } = useWallet();
   const { setVisible } = useWalletModal();
   const [skill, setSkill] = useState<Skill | null>(null);
   const [loading, setLoading] = useState(true);
@@ -39,14 +60,23 @@ export default function SkillDetailPage() {
   const [input, setInput] = useState("");
   const [context, setContext] = useState("");
   const [executing, setExecuting] = useState(false);
+  const [paying, setPaying] = useState(false);
   const [result, setResult] = useState("");
   const [mocked, setMocked] = useState(false);
   const [guest, setGuest] = useState(false);
+  const [paidRun, setPaidRun] = useState(false);
+  const [paidSol, setPaidSol] = useState(0);
   const [sharePath, setSharePath] = useState("");
   const [copiedShare, setCopiedShare] = useState(false);
   const [copiedResult, setCopiedResult] = useState(false);
   const [copiedReceipt, setCopiedReceipt] = useState(false);
   const [origin, setOrigin] = useState("https://solkernal.xyz");
+  const [freeRemaining, setFreeRemaining] = useState<number | null>(null);
+  const [freeLimit, setFreeLimit] = useState<number | null>(null);
+  const [payInfo, setPayInfo] = useState<PayInfo | null>(null);
+  const [payError, setPayError] = useState("");
+
+  const isPaywallSkill = slug === PAYWALL_SLUG;
 
   useEffect(() => {
     setOrigin(window.location.origin);
@@ -89,49 +119,163 @@ export default function SkillDetailPage() {
     };
   }, [slug]);
 
+  // Client-side pay config from public env (server still verifies on-chain).
+  useEffect(() => {
+    if (!isPaywallSkill) {
+      setPayInfo(null);
+      return;
+    }
+    const treasury = (process.env.NEXT_PUBLIC_PROTOCOL_TREASURY || "").trim() || null;
+    const parsed = Number(process.env.NEXT_PUBLIC_PAY_PER_RUN_SOL || "0.001");
+    const paySol = Number.isFinite(parsed) && parsed > 0 ? parsed : 0.001;
+    setPayInfo({
+      paymentEnabled: Boolean(treasury),
+      treasury,
+      paySol,
+      payLamports: Math.round(paySol * LAMPORTS_PER_SOL),
+    });
+  }, [isPaywallSkill]);
+
+  const runExecute = useCallback(
+    async (opts?: { txSignature?: string }) => {
+      if (!skill) return;
+      const combined = `${input}\n${context}`.trim();
+      if (!combined) {
+        setResult("Error: Enter a mint address or input first.");
+        return;
+      }
+
+      setExecuting(true);
+      setResult("");
+      setMocked(false);
+      setGuest(false);
+      setPaidRun(false);
+      setPaidSol(0);
+      setSharePath("");
+      setPayError("");
+      try {
+        const body: {
+          slug: string;
+          input: string;
+          walletAddress?: string;
+          txSignature?: string;
+        } = {
+          slug: skill.slug,
+          input: combined,
+        };
+        if (connected && publicKey) {
+          body.walletAddress = publicKey.toBase58();
+        }
+        if (opts?.txSignature) {
+          body.txSignature = opts.txSignature;
+        }
+        const res = await fetch("/api/execute", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (typeof data.freeRemaining === "number") setFreeRemaining(data.freeRemaining);
+        if (typeof data.freeLimit === "number") setFreeLimit(data.freeLimit);
+
+        if (res.ok) {
+          const out =
+            typeof data.output === "string" && data.output.trim()
+              ? data.output
+              : "(Empty response from model — try again.)";
+          setResult(out);
+          setMocked(Boolean(data.mocked));
+          setGuest(Boolean(data.guest));
+          setPaidRun(Boolean(data.paymentEnforced));
+          setPaidSol(typeof data.paidSol === "number" ? data.paidSol : 0);
+          setSharePath(data.sharePath || (data.executionId ? `/r/${data.executionId}` : ""));
+          setSkill((s) => (s ? { ...s, runs: s.runs + 1 } : s));
+          setPayInfo((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  paymentRequired: false,
+                  freeRemaining: typeof data.freeRemaining === "number" ? data.freeRemaining : prev.freeRemaining,
+                }
+              : prev,
+          );
+        } else if (res.status === 402 || data.paymentRequired) {
+          setPayInfo((prev) => ({
+            paymentEnabled: Boolean(data.paymentEnabled ?? prev?.paymentEnabled),
+            paymentRequired: true,
+            treasury: data.treasury ?? prev?.treasury ?? null,
+            paySol: typeof data.paySol === "number" ? data.paySol : prev?.paySol ?? 0.001,
+            payLamports:
+              typeof data.payLamports === "number"
+                ? data.payLamports
+                : prev?.payLamports ?? Math.round(0.001 * LAMPORTS_PER_SOL),
+            freeRemaining: 0,
+            freeLimit: typeof data.freeLimit === "number" ? data.freeLimit : prev?.freeLimit,
+            guestLimit: Boolean(data.guestLimit),
+            error: typeof data.error === "string" ? data.error : "Payment required",
+          }));
+          setFreeRemaining(0);
+          setResult(`Error: ${data.error || "Free trial limit reached. Pay SOL to continue."}`);
+        } else {
+          setResult(`Error: ${data.error || res.statusText || "Execution failed"}`);
+        }
+      } catch {
+        setResult("Execution failed. Check your network and try again.");
+      } finally {
+        setExecuting(false);
+      }
+    },
+    [skill, input, context, connected, publicKey],
+  );
+
   const execute = async () => {
-    if (!skill) return;
+    await runExecute();
+  };
+
+  const payAndRun = async () => {
+    if (!skill || !payInfo?.paymentEnabled || !payInfo.treasury) {
+      setPayError("Pay-per-run is not configured (missing treasury).");
+      return;
+    }
+    if (!connected || !publicKey) {
+      setVisible(true);
+      setPayError("Connect a wallet that holds a little SOL, then tap Pay & run again.");
+      return;
+    }
     const combined = `${input}\n${context}`.trim();
     if (!combined) {
       setResult("Error: Enter a mint address or input first.");
       return;
     }
 
-    setExecuting(true);
+    setPaying(true);
+    setPayError("");
     setResult("");
-    setMocked(false);
-    setGuest(false);
-    setSharePath("");
     try {
-      const body: { slug: string; input: string; walletAddress?: string } = {
-        slug: skill.slug,
-        input: combined,
-      };
-      if (connected && publicKey) {
-        body.walletAddress = publicKey.toBase58();
-      }
-      const res = await fetch("/api/execute", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (res.ok) {
-        const out = typeof data.output === "string" && data.output.trim()
-          ? data.output
-          : "(Empty response from model — try again.)";
-        setResult(out);
-        setMocked(Boolean(data.mocked));
-        setGuest(Boolean(data.guest));
-        setSharePath(data.sharePath || (data.executionId ? `/r/${data.executionId}` : ""));
-        setSkill((s) => (s ? { ...s, runs: s.runs + 1 } : s));
-      } else {
-        setResult(`Error: ${data.error || res.statusText || "Execution failed"}`);
-      }
-    } catch {
-      setResult("Execution failed. Check your network and try again.");
+      const treasury = new PublicKey(payInfo.treasury);
+      const lamports = payInfo.payLamports || Math.round(payInfo.paySol * LAMPORTS_PER_SOL);
+      const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash("confirmed");
+      const tx = new Transaction({
+        feePayer: publicKey,
+        recentBlockhash: blockhash,
+      }).add(
+        SystemProgram.transfer({
+          fromPubkey: publicKey,
+          toPubkey: treasury,
+          lamports,
+        }),
+      );
+
+      const signature = await sendTransaction(tx, connection, { skipPreflight: false });
+      await connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, "confirmed");
+      await runExecute({ txSignature: signature });
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Payment failed";
+      setPayError(msg);
+      setResult(`Error: Payment failed — ${msg}`);
     } finally {
-      setExecuting(false);
+      setPaying(false);
     }
   };
 
@@ -367,9 +511,11 @@ export default function SkillDetailPage() {
                     <span className="font-medium text-text-primary">Real model response</span>
                   </div>
                   <p className="mt-1.5">
-                    {guest
-                      ? "Guest trial — no wallet required. Rate limited to 5 runs/hour per IP."
-                      : "Wallet used for identity only. On-chain fee settlement not enforced yet."}
+                    {paidRun
+                      ? `Paid run — ${paidSol > 0 ? `${paidSol} SOL` : "SOL"} transfer verified on-chain.`
+                      : guest
+                        ? "Guest trial — no wallet required. Rate limited to 5 runs/hour per IP."
+                        : "Wallet used for identity only. $SKRN fee splits are not live."}
                     {liveData
                       ? " This skill may have called chain/market tools; tool data quality depends on RPC and APIs."
                       : " This skill is prompt-only (no live chain tools)."}
@@ -434,8 +580,37 @@ export default function SkillDetailPage() {
               </span>
             </div>
             <p className="text-mono-sm text-text-tertiary">
-              Free trial · no payment charged · guest 5 runs/hour. Listed fee is display-only. Not financial advice.
+              {isPaywallSkill && payInfo?.paymentEnabled
+                ? `Free trial first (5 guest runs/hour). After quota: ${payInfo.paySol} SOL pay-per-run (verified on-chain). $SKRN fee splits still not live. Not financial advice.`
+                : "Free trial · guest 5 runs/hour. Listed $SKRN fee is display-only. Not financial advice."}
             </p>
+
+            {(freeRemaining !== null || freeLimit !== null) && (
+              <div className="rounded-md border border-border bg-bg-primary px-3 py-2 font-mono text-mono-sm text-text-secondary">
+                Free remaining:{" "}
+                <span className="font-semibold text-text-primary">
+                  {freeRemaining ?? "—"}
+                  {freeLimit !== null ? ` / ${freeLimit}` : ""}
+                </span>
+                {isPaywallSkill && payInfo?.paymentEnabled && (
+                  <span className="text-text-tertiary"> · paid path available after quota</span>
+                )}
+              </div>
+            )}
+
+            {payInfo?.paymentRequired && (
+              <div
+                className="rounded-md border-2 border-warning/50 bg-warning-subtle px-3 py-3 text-small text-warning"
+                role="status"
+              >
+                <p className="font-semibold">Free trial limit reached</p>
+                <p className="mt-1 text-warning/90">
+                  {payInfo.paymentEnabled
+                    ? `Pay ${payInfo.paySol} SOL to unlock one more rug scan. Transfer is verified on-chain before execute.`
+                    : "Pay-per-run is not configured yet. Wait for the free window to reset."}
+                </p>
+              </div>
+            )}
 
             <div>
               <label htmlFor="skill-input" className="mb-1.5 block text-small font-medium text-text-secondary">
@@ -471,19 +646,52 @@ export default function SkillDetailPage() {
               variant="accent"
               type="button"
               onClick={() => void execute()}
-              loading={executing}
-              disabled={!input.trim()}
-              leadingIcon={!executing ? <BoltIcon size={18} /> : undefined}
+              loading={executing && !paying}
+              disabled={!input.trim() || paying || (payInfo?.paymentRequired === true && !payInfo.paymentEnabled)}
+              leadingIcon={!executing && !paying ? <BoltIcon size={18} /> : undefined}
             >
-              {executing ? "Executing…" : connected ? "Execute skill" : "Run free trial"}
+              {executing && !paying
+                ? "Executing…"
+                : payInfo?.paymentRequired
+                  ? "Retry free trial"
+                  : connected
+                    ? "Execute skill"
+                    : "Run free trial"}
             </Button>
+
+            {isPaywallSkill && payInfo?.paymentEnabled && (
+              <Button
+                fullWidth
+                size="lg"
+                variant="secondary"
+                type="button"
+                onClick={() => void payAndRun()}
+                loading={paying}
+                disabled={!input.trim() || executing}
+              >
+                {paying
+                  ? "Confirming SOL…"
+                  : connected
+                    ? `Pay ${payInfo.paySol} SOL & run`
+                    : `Connect · pay ${payInfo.paySol} SOL & run`}
+              </Button>
+            )}
+
+            {payError && (
+              <p className="text-center text-small text-danger" role="alert">
+                {payError}
+              </p>
+            )}
+
             {!connected && (
               <button
                 type="button"
                 onClick={() => setVisible(true)}
                 className="w-full text-center text-small text-text-tertiary underline-offset-2 hover:text-text-secondary hover:underline"
               >
-                Or connect wallet for identity
+                {isPaywallSkill && payInfo?.paymentEnabled
+                  ? "Connect wallet for paid runs (or free trial without it)"
+                  : "Or connect wallet for identity"}
               </button>
             )}
 

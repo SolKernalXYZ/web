@@ -122,13 +122,17 @@ Top of marketplace is 100% Solana decision tools.
 **Theme:** Product becomes a business, not a demo.
 
 ### Build
-- [ ] Optional SOL tip / paywall prototype on **one** skill (rug-risk-scanner)
-- [ ] Or: “Support run” SOL transfer before unlimited runs after free quota
-- [ ] Clear UI: free remaining vs paid path
-- [ ] Server: verify signature / transfer before extra executes (minimal viable)
+- [x] Optional SOL pay-per-run on **one** skill (`rug-risk-scanner`)
+- [x] After free guest quota → 402 + pay path; free trial stays first
+- [x] Clear UI: free remaining vs “Pay X SOL & run” on skill detail
+- [x] Server: verify confirmed SystemProgram transfer to treasury before extra executes
+- [x] Homepage scanner: surface payment-required + link to full skill pay path
+- [x] Docs / roadmap honesty updated for prototype scope
 
 ### Push / Deploy
+- [ ] Set `NEXT_PUBLIC_PROTOCOL_TREASURY` (and optional `NEXT_PUBLIC_PAY_PER_RUN_SOL=0.001`) on Vercel
 - [ ] Deploy carefully; keep free trial intact
+- [ ] Smoke: free runs until limit → Pay & run with real SOL → receipt with paid run
 
 ### Tweet
 ```
@@ -141,6 +145,7 @@ https://solkernal.xyz/skills/rug-risk-scanner
 
 ### Done when
 You complete one paid (or tip) flow yourself on mainnet/devnet as documented.
+**Note:** Without `NEXT_PUBLIC_PROTOCOL_TREASURY`, paid path stays disabled (free trial only).
 
 ---
 
@@ -294,6 +299,14 @@ Thread is up + this file’s Week 1 metrics filled.
 - Mock vs Live LLM banners on skill detail, mint scanner, receipts (warning border for mock)
 - Docs: `/docs/free-trial-and-live-data` (trial limits, Live data meaning, mock vs live)
 - **Next:** push → deploy → smoke featured skills → tweet Day 3 copy
+
+### 2026-07-12 — Day 4 code
+- `src/lib/payPerRun.ts`: treasury config + on-chain SOL transfer verification
+- `/api/execute`: accepts `txSignature`; 402 after free quota on rug-risk-scanner; signature uniqueness
+- Skill detail: free remaining meter + Pay SOL & run (wallet transfer → confirm → re-execute)
+- Mint scanner: payment-required CTA → full skill page
+- Env: `NEXT_PUBLIC_PROTOCOL_TREASURY`, `NEXT_PUBLIC_PAY_PER_RUN_SOL`
+- **Next:** set treasury on Vercel → deploy → complete one paid mainnet run → tweet Day 4
 
 ---
 
