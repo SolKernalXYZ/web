@@ -130,8 +130,9 @@ Top of marketplace is 100% Solana decision tools.
 - [x] Docs / roadmap honesty updated for prototype scope
 
 ### Push / Deploy
-- [ ] Set `NEXT_PUBLIC_PROTOCOL_TREASURY` (and optional `NEXT_PUBLIC_PAY_PER_RUN_SOL=0.001`) on Vercel
-- [ ] Deploy carefully; keep free trial intact
+- [ ] Set `NEXT_PUBLIC_PROTOCOL_TREASURY` (and optional `NEXT_PUBLIC_PAY_PER_RUN_SOL=0.001`) on Vercel — leave empty to keep paid path off
+- [x] Push `main` → `SolKernalXYZ/web` (`4b5b429`)
+- [x] Deploy prod via `vercel --prod` → https://solkernal.xyz (free trial intact; pay path off until treasury set)
 - [ ] Smoke: free runs until limit → Pay & run with real SOL → receipt with paid run
 
 ### Tweet
